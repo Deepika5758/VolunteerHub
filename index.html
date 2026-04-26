@@ -6,10 +6,6 @@
 <title>VolunteerOS — Smart Allocation System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-<!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --bg: #0a0f1a;
@@ -34,59 +30,149 @@
     --glow2: 0 0 20px rgba(59, 130, 246, 0.25);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-  /* TOP NAV */
+  /* ── TOP NAV ── */
   .topnav {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between;
-    height: 60px; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(12px);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
   }
   .brand { display: flex; align-items: center; gap: 0.75rem; }
-  .brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .brand-icon {
+    width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
   .brand-name { font-family: var(--mono); font-size: 1rem; color: var(--accent); letter-spacing: 0.05em; }
   .brand-sub { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
-  .nav-status { display: flex; align-items: center; gap: 1rem; }
-  .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+  .nav-status {
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--success);
+    animation: pulse 2s infinite;
+  }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
   .status-text { font-size: 0.75rem; color: var(--text-muted); font-family: var(--mono); }
-  .ai-badge { background: linear-gradient(135deg, rgba(0,212,170,0.15), rgba(59,130,246,0.15)); border: 1px solid var(--border); border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.7rem; font-family: var(--mono); color: var(--accent); letter-spacing: 0.05em; }
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+  .ai-badge {
+    background: linear-gradient(135deg, rgba(0,212,170,0.15), rgba(59,130,246,0.15));
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 0.3rem 0.8rem;
+    font-size: 0.7rem; font-family: var(--mono); color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px; cursor: pointer;
+    background: none; border: none; padding: 4px;
+  }
   .hamburger span { display: block; width: 22px; height: 2px; background: var(--text-muted); border-radius: 2px; transition: 0.3s; }
 
-  /* LAYOUT */
+  /* ── MAIN LAYOUT ── */
   .layout { display: flex; min-height: calc(100vh - 60px); }
 
-  /* SIDEBAR */
-  .sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); padding: 1.5rem 0; flex-shrink: 0; transition: transform 0.3s; }
-  .sidebar-section { margin-bottom: 1.5rem; }
-  .sidebar-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); padding: 0 1.25rem; margin-bottom: 0.5rem; font-family: var(--mono); }
-  .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 1.25rem; cursor: pointer; border-left: 3px solid transparent; transition: all 0.2s; color: var(--text-muted); font-size: 0.875rem; font-weight: 500; }
-  .nav-item:hover { background: var(--surface2); color: var(--text); }
-  .nav-item.active { background: rgba(0,212,170,0.08); border-left-color: var(--accent); color: var(--accent); }
-  .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
-  .nav-badge { margin-left: auto; background: var(--accent2); color: #fff; font-size: 0.6rem; border-radius: 10px; padding: 0.1rem 0.45rem; font-family: var(--mono); }
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 230px;
+    background: #0d1526;
+    border-right: 1px solid #1a2840;
+    padding: 1.25rem 0 1rem;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .sidebar-section { margin-bottom: 0.5rem; }
+  .sidebar-label {
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.18em;
+    color: #3a5a8a; padding: 0.5rem 1.25rem 0.4rem;
+    font-family: var(--mono); font-weight: 700;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 0.85rem;
+    padding: 0.72rem 1.1rem 0.72rem 1.25rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    margin: 0.15rem 0.75rem;
+    transition: all 0.18s ease;
+    color: #7a90b8;
+    font-size: 0.88rem; font-weight: 500;
+    position: relative;
+    user-select: none;
+  }
+  .nav-item:hover {
+    background: rgba(255,255,255,0.04);
+    color: #c2d0e8;
+    border-color: rgba(255,255,255,0.06);
+  }
+  .nav-item.active {
+    background: rgba(30, 80, 180, 0.18);
+    border-color: rgba(59, 130, 246, 0.55);
+    color: #e8f0ff;
+    box-shadow: 0 0 16px rgba(59,130,246,0.12), inset 0 0 12px rgba(59,130,246,0.05);
+  }
+  .nav-item.active .nav-icon { filter: none; }
+  .nav-icon {
+    font-size: 1.1rem; width: 22px; text-align: center;
+    flex-shrink: 0; line-height: 1;
+  }
+  .nav-label { flex: 1; }
+  .nav-badge {
+    margin-left: auto;
+    background: rgba(59,130,246,0.25);
+    color: #7eb8ff;
+    font-size: 0.6rem; border-radius: 10px; padding: 0.15rem 0.5rem;
+    font-family: var(--mono); font-weight: 700;
+    border: 1px solid rgba(59,130,246,0.3);
+  }
+  .sidebar-divider {
+    height: 1px; background: #1a2840;
+    margin: 0.6rem 1.25rem 0.85rem;
+  }
 
-  /* MAIN CONTENT */
+  /* ── MAIN CONTENT ── */
   .main { flex: 1; overflow-y: auto; }
+
+  /* ── PANELS (tabs) ── */
   .panel { display: none; padding: 1.5rem; }
   .panel.active { display: block; animation: fadeIn 0.3s ease; }
   @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-  /* MAP PANEL */
-  #panel-map { padding: 0 !important; }
-  #panel-map.active { display: flex !important; flex-direction: column; height: calc(100vh - 60px); }
-
-  /* SECTION HEADER */
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
+  }
   .section-title { font-family: var(--mono); font-size: 1rem; color: var(--text); letter-spacing: 0.04em; }
   .section-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
 
-  /* STAT CARDS */
+  /* ── STAT CARDS ── */
   .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-  .stat-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1.25rem; position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+  .stat-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.1rem 1.25rem;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
   .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
   .stat-card.green::before { background: var(--success); }
   .stat-card.blue::before { background: var(--accent2); }
   .stat-card.teal::before { background: var(--accent); }
@@ -101,25 +187,52 @@
   .stat-value.red { color: var(--danger); }
   .stat-meta { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.3rem; }
 
-  /* CARDS */
-  .card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
-  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+  /* ── CARDS / BOXES ── */
+  .card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+  }
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem; padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
   .card-title { font-family: var(--mono); font-size: 0.85rem; color: var(--text); }
 
-  /* FORM ELEMENTS */
+  /* ── FORM ELEMENTS ── */
   .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
   .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
   .form-group label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-family: var(--mono); }
-  .form-group input, .form-group select, .form-group textarea { background: var(--surface3); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.9rem; color: var(--text); font-family: var(--sans); font-size: 0.875rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; width: 100%; }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,212,170,0.12); }
+  .form-group input, .form-group select, .form-group textarea {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.6rem 0.9rem;
+    color: var(--text); font-family: var(--sans); font-size: 0.875rem;
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,212,170,0.12);
+  }
   .form-group select option { background: var(--surface2); }
   .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-dim); }
   .skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem; }
-  .skill-tag { background: var(--surface3); border: 1px solid var(--border); border-radius: 20px; padding: 0.3rem 0.75rem; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; color: var(--text-muted); user-select: none; }
-  .skill-tag.selected { background: rgba(0,212,170,0.15); border-color: var(--accent); color: var(--accent); }
+  .skill-tag {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 20px; padding: 0.3rem 0.75rem;
+    font-size: 0.75rem; cursor: pointer; transition: all 0.2s; color: var(--text-muted);
+    user-select: none;
+  }
+  .skill-tag.selected {
+    background: rgba(0,212,170,0.15); border-color: var(--accent); color: var(--accent);
+  }
 
-  /* BUTTONS */
-  .btn { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 0.6rem 1.2rem; border-radius: 8px; border: none; cursor: pointer;
+    font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;
+    font-weight: 700;
+  }
   .btn-primary { background: var(--accent); color: #0a0f1a; }
   .btn-primary:hover { background: #00e8bb; box-shadow: var(--glow); }
   .btn-secondary { background: var(--surface3); color: var(--text); border: 1px solid var(--border); }
@@ -132,87 +245,167 @@
   .btn-amber:hover { background: #fbbf24; }
   .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.7rem; }
 
-  /* TABLE */
+  /* ── TABLE ── */
   .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
   table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
   thead tr { background: var(--surface3); }
-  thead th { padding: 0.75rem 1rem; text-align: left; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
-  tbody tr { border-bottom: 1px solid rgba(42,58,85,0.5); transition: background 0.15s; }
+  thead th {
+    padding: 0.75rem 1rem; text-align: left;
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em;
+    color: var(--text-muted); text-transform: uppercase;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(42,58,85,0.5);
+    transition: background 0.15s;
+  }
   tbody tr:hover { background: var(--surface3); }
   tbody td { padding: 0.75rem 1rem; color: var(--text); vertical-align: middle; }
   tbody td:first-child { font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted); }
-  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-dim); font-size: 0.85rem; }
+  .empty-state {
+    text-align: center; padding: 3rem 1rem; color: var(--text-dim);
+    font-size: 0.85rem;
+  }
   .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
 
-  /* BADGES */
-  .badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.68rem; font-family: var(--mono); font-weight: 700; letter-spacing: 0.04em; white-space: nowrap; }
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.2rem 0.6rem; border-radius: 20px;
+    font-size: 0.68rem; font-family: var(--mono); font-weight: 700;
+    letter-spacing: 0.04em; white-space: nowrap;
+  }
   .badge-urgent { background: rgba(239,68,68,0.15); color: var(--urgent); border: 1px solid rgba(239,68,68,0.3); }
   .badge-medium { background: rgba(245,158,11,0.15); color: var(--medium); border: 1px solid rgba(245,158,11,0.3); }
   .badge-low { background: rgba(34,197,94,0.15); color: var(--low); border: 1px solid rgba(34,197,94,0.3); }
   .badge-info { background: rgba(59,130,246,0.15); color: var(--accent2); border: 1px solid rgba(59,130,246,0.3); }
   .badge-teal { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
 
-  /* VOLUNTEER CARDS */
+  /* ── VOLUNTEER CARD (grid view) ── */
   .volunteer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1rem; }
-  .vol-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; transition: all 0.2s; position: relative; overflow: hidden; }
+  .vol-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1rem; transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
   .vol-card:hover { border-color: var(--accent); box-shadow: 0 0 16px rgba(0,212,170,0.1); }
-  .vol-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity: 0; transition: opacity 0.2s; }
+  .vol-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity 0.2s;
+  }
   .vol-card:hover::after { opacity: 1; }
   .vol-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-  .vol-avatar { width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; color: #fff; font-family: var(--mono); flex-shrink: 0; }
+  .vol-avatar {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 700; color: #fff; font-family: var(--mono);
+    flex-shrink: 0;
+  }
   .vol-name { font-weight: 600; font-size: 0.9rem; }
   .vol-id { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); }
   .vol-skills { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0; }
-  .vol-skill-tag { background: var(--surface3); border-radius: 12px; padding: 0.15rem 0.55rem; font-size: 0.65rem; color: var(--text-muted); border: 1px solid var(--border); }
+  .vol-skill-tag {
+    background: var(--surface3); border-radius: 12px; padding: 0.15rem 0.55rem;
+    font-size: 0.65rem; color: var(--text-muted); border: 1px solid var(--border);
+  }
   .vol-info { font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.3rem; }
   .vol-info-row { display: flex; gap: 0.5rem; align-items: center; }
   .vol-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
 
-  /* AREA CARDS */
+  /* ── TASK AREAS ── */
   .area-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 1rem; }
-  .area-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; transition: border-color 0.2s; }
+  .area-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1rem; transition: border-color 0.2s;
+  }
   .area-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.75rem; }
   .area-name { font-weight: 600; font-size: 0.9rem; }
   .area-type { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
   .area-capacity { font-family: var(--mono); font-size: 0.75rem; color: var(--text-muted); margin: 0.5rem 0; }
-  .capacity-bar { height: 4px; background: var(--surface3); border-radius: 4px; overflow: hidden; margin: 0.5rem 0; }
+  .capacity-bar {
+    height: 4px; background: var(--surface3); border-radius: 4px; overflow: hidden; margin: 0.5rem 0;
+  }
   .capacity-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
   .fill-green { background: var(--success); }
   .fill-amber { background: var(--accent3); }
   .fill-red { background: var(--danger); }
 
-  /* ROSTER */
-  .roster-controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1rem; }
-  .shift-btn { padding: 0.45rem 0.9rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface3); color: var(--text-muted); font-family: var(--mono); font-size: 0.72rem; cursor: pointer; transition: all 0.2s; }
-  .shift-btn.active { background: rgba(0,212,170,0.15); border-color: var(--accent); color: var(--accent); }
-  .search-box { background: var(--surface3); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.9rem; color: var(--text); font-family: var(--sans); font-size: 0.85rem; outline: none; transition: border-color 0.2s; min-width: 200px; }
+  /* ── ROSTER TABLE SECTION ── */
+  .roster-controls {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+    margin-bottom: 1rem;
+  }
+  .shift-btn {
+    padding: 0.45rem 0.9rem; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--surface3); color: var(--text-muted);
+    font-family: var(--mono); font-size: 0.72rem; cursor: pointer; transition: all 0.2s;
+  }
+  .shift-btn.active {
+    background: rgba(0,212,170,0.15); border-color: var(--accent); color: var(--accent);
+  }
+  .search-box {
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.5rem 0.9rem;
+    color: var(--text); font-family: var(--sans); font-size: 0.85rem;
+    outline: none; transition: border-color 0.2s;
+    min-width: 200px;
+  }
   .search-box:focus { border-color: var(--accent); }
 
-  /* AI INSIGHT */
-  .ai-insight { background: linear-gradient(135deg, rgba(0,212,170,0.08), rgba(59,130,246,0.08)); border: 1px solid rgba(0,212,170,0.2); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; gap: 1rem; align-items: flex-start; }
+  /* ── AI INSIGHT PANEL ── */
+  .ai-insight {
+    background: linear-gradient(135deg, rgba(0,212,170,0.08), rgba(59,130,246,0.08));
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
   .ai-icon { font-size: 1.3rem; flex-shrink: 0; }
   .ai-text { font-size: 0.82rem; color: var(--text); line-height: 1.5; }
   .ai-text strong { color: var(--accent); }
 
-  /* MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 200;
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; width: min(560px, 95vw); max-height: 85vh; overflow-y: auto; animation: slideUp 0.25s ease; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.5rem; width: min(560px, 95vw);
+    max-height: 85vh; overflow-y: auto;
+    animation: slideUp 0.25s ease;
+  }
   @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+  }
   .modal-title { font-family: var(--mono); font-size: 0.9rem; color: var(--accent); }
-  .modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; line-height: 1; transition: color 0.2s; }
+  .modal-close {
+    background: none; border: none; color: var(--text-muted); cursor: pointer;
+    font-size: 1.2rem; line-height: 1; transition: color 0.2s;
+  }
   .modal-close:hover { color: var(--text); }
   .modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
 
-  /* TOAST */
-  .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 3000; display: flex; flex-direction: column; gap: 0.5rem; }
-  .toast { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.8rem; max-width: 300px; animation: toastIn 0.3s ease; display: flex; align-items: center; gap: 0.75rem; }
+  /* ── TOAST ── */
+  .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 300; display: flex; flex-direction: column; gap: 0.5rem; }
+  .toast {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.75rem 1rem;
+    font-size: 0.8rem; max-width: 300px;
+    animation: toastIn 0.3s ease;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
   .toast.success { border-color: rgba(34,197,94,0.3); }
   .toast.error { border-color: rgba(239,68,68,0.3); }
   @keyframes toastIn { from{transform:translateX(20px);opacity:0} to{transform:translateX(0);opacity:1} }
 
-  /* ANALYTICS */
+  /* ── ANALYTICS ── */
   .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 1rem; }
   .bar-chart { display: flex; flex-direction: column; gap: 0.6rem; }
   .bar-row { display: flex; align-items: center; gap: 0.75rem; font-size: 0.78rem; }
@@ -221,55 +414,7 @@
   .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
   .bar-val { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); min-width: 24px; text-align: right; }
 
-  /* ═══════════════════════ MAP PANEL ═══════════════════════ */
-  .map-topbar {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 0.75rem 1.25rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-    flex-shrink: 0;
-  }
-  .map-topbar-title { font-family: var(--mono); font-size: 0.85rem; color: var(--accent); letter-spacing: 0.04em; }
-  .map-legend { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: var(--text-muted); font-family: var(--mono); }
-  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-  .map-body { flex: 1; position: relative; min-height: 400px; overflow: hidden; }
-  #mapLeaflet { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; }
-  .map-sidebar-panel {
-    position: absolute; top: 1rem; right: 1rem; z-index: 500;
-    width: 300px; background: rgba(17,24,39,0.96); border: 1px solid var(--border);
-    border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px);
-    max-height: calc(100% - 2rem); overflow-y: auto;
-  }
-  .map-area-list { display: flex; flex-direction: column; gap: 0.6rem; }
-  .map-area-item {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-    padding: 0.75rem; cursor: pointer; transition: all 0.2s;
-  }
-  .map-area-item:hover { border-color: var(--accent); }
-  .map-area-item.selected { border-color: var(--accent); background: rgba(0,212,170,0.08); }
-  .map-area-name { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.3rem; }
-  .map-area-stats { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-  .map-vol-count { font-family: var(--mono); font-size: 0.72rem; }
-  .map-stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; margin-bottom: 0.75rem; }
-  .map-stat-mini { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem; text-align: center; }
-  .map-stat-mini-val { font-family: var(--mono); font-size: 1.1rem; font-weight: 700; }
-  .map-stat-mini-lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 0.1rem; }
-  .map-filter-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-  .map-filter-btn { padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface3); color: var(--text-muted); font-family: var(--mono); font-size: 0.65rem; cursor: pointer; transition: all 0.2s; }
-  .map-filter-btn.active { background: rgba(0,212,170,0.15); border-color: var(--accent); color: var(--accent); }
-
-  /* Leaflet overrides - NO filter on tiles so map is visible */
-  .leaflet-popup-content-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
-  .leaflet-popup-tip { background: var(--surface); }
-  .leaflet-popup-content { margin: 10px 14px; font-family: var(--sans); font-size: 0.82rem; }
-  .leaflet-control-zoom a { background: #1a2235 !important; color: #e2e8f0 !important; border-color: #2a3a55 !important; }
-  .leaflet-control-zoom a:hover { background: #1f2d45 !important; }
-  .leaflet-control-attribution { background: rgba(10,15,26,0.75) !important; color: #8899bb !important; font-size: 0.6rem !important; }
-  .leaflet-control-attribution a { color: #00d4aa !important; }
-
-  /* Custom marker styles */
-  .vol-marker { border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; font-size: 11px; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
-
-  /* PRINT */
+  /* ── PRINT STYLES ── */
   @media print {
     .sidebar, .topnav, .section-header .btn, .roster-controls, .nav-item, .btn { display: none !important; }
     .layout { display: block; }
@@ -279,9 +424,13 @@
     thead th, tbody td { padding: 4px 6px; }
   }
 
-  /* RESPONSIVE */
+  /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
-    .sidebar { position: fixed; left: 0; top: 60px; bottom: 0; z-index: 99; transform: translateX(-100%); width: 240px; }
+    .sidebar {
+      position: fixed; left: 0; top: 60px; bottom: 0; z-index: 99;
+      transform: translateX(-100%);
+      width: 250px;
+    }
     .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
     .hamburger { display: flex; }
     .main { width: 100%; }
@@ -289,15 +438,16 @@
     .panel { padding: 1rem; }
     .form-grid { grid-template-columns: 1fr; }
     .volunteer-grid, .area-grid { grid-template-columns: 1fr; }
-    .map-sidebar-panel { width: calc(100% - 2rem); right: 1rem; top: auto; bottom: 1rem; max-height: 45%; }
   }
 
+  /* ── LIVE CLOCK ── */
   .live-time { font-family: var(--mono); font-size: 0.78rem; color: var(--text-muted); }
+
+  /* ── URGENCY DOT ── */
   .urgency-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .dot-urgent { background: var(--urgent); box-shadow: 0 0 6px var(--urgent); }
   .dot-medium { background: var(--medium); }
   .dot-low { background: var(--low); }
-  @keyframes emergPulse { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)} 50%{box-shadow:0 0 0 8px rgba(239,68,68,0)} }
 </style>
 </head>
 <body>
@@ -328,53 +478,39 @@
   <div class="sidebar-section">
     <div class="sidebar-label">Navigation</div>
     <div class="nav-item active" onclick="switchPanel('dashboard',this)">
-      <span class="nav-icon">🏠</span> Dashboard
+      <span class="nav-icon">🏠</span><span class="nav-label">Dashboard</span>
     </div>
     <div class="nav-item" onclick="switchPanel('volunteers',this)">
-      <span class="nav-icon">👥</span> Volunteers
+      <span class="nav-icon">🧑‍🤝‍🧑</span><span class="nav-label">Volunteers</span>
       <span class="nav-badge" id="badge-volunteers">0</span>
     </div>
     <div class="nav-item" onclick="switchPanel('areas',this)">
-      <span class="nav-icon">📍</span> Task Areas
+      <span class="nav-icon">📍</span><span class="nav-label">Task Areas</span>
       <span class="nav-badge" id="badge-areas">0</span>
     </div>
     <div class="nav-item" onclick="switchPanel('roster',this)">
-      <span class="nav-icon">📋</span> Duty Roster
-    </div>
-    <div class="nav-item" onclick="switchPanel('intelligence',this)">
-      <span class="nav-icon">⚖️</span> Intelligence
-    </div>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Operations</div>
-    <div class="nav-item" onclick="switchPanel('map',this)">
-      <span class="nav-icon">🗺️</span> Live Map
-    </div>
-    <div class="nav-item" onclick="switchPanel('emergency',this)">
-      <span class="nav-icon">🚨</span> Emergency
-      <span class="nav-badge" id="badge-emergency" style="background:var(--danger)">0</span>
-    </div>
-    <div class="nav-item" onclick="switchPanel('alerts',this)">
-      <span class="nav-icon">🔔</span> Alerts
-      <span class="nav-badge" id="badge-alerts" style="background:var(--accent3)">0</span>
-    </div>
-    <div class="nav-item" onclick="switchPanel('allocate',this)">
-      <span class="nav-icon">🔀</span> Auto-Allocate
+      <span class="nav-icon">📋</span><span class="nav-label">Duty Roster</span>
     </div>
     <div class="nav-item" onclick="switchPanel('analytics',this)">
-      <span class="nav-icon">📈</span> Analytics
+      <span class="nav-icon">⚖️</span><span class="nav-label">Intelligence</span>
     </div>
   </div>
+
+  <div class="sidebar-divider"></div>
+
   <div class="sidebar-section">
-    <div class="sidebar-label">Tools</div>
-    <div class="nav-item" onclick="exportRoster()">
-      <span class="nav-icon">💾</span> Export
+    <div class="sidebar-label">Operations</div>
+    <div class="nav-item" onclick="switchPanel('allocate',this)">
+      <span class="nav-icon">🚨</span><span class="nav-label">Emergency Alloc</span>
     </div>
-    <div class="nav-item" onclick="switchPanel('settings',this)">
-      <span class="nav-icon">⚙️</span> Settings
+    <div class="nav-item" onclick="showAlerts()">
+      <span class="nav-icon">🔔</span><span class="nav-label">Alerts</span>
+    </div>
+    <div class="nav-item" onclick="exportRoster()">
+      <span class="nav-icon">📤</span><span class="nav-label">Export</span>
     </div>
     <div class="nav-item" onclick="resetAll()">
-      <span class="nav-icon">🔄</span> Reset All
+      <span class="nav-icon">⚙️</span><span class="nav-label">Settings</span>
     </div>
   </div>
 </aside>
@@ -382,53 +518,65 @@
 <!-- MAIN -->
 <main class="main">
 
-  <!-- ═══ DASHBOARD ═══ -->
+  <!-- ═══════════ DASHBOARD ═══════════ -->
   <div id="panel-dashboard" class="panel active">
     <div class="section-header">
       <div>
         <div class="section-title">// COMMAND DASHBOARD</div>
         <div class="section-sub">Real-time volunteer coordination overview</div>
       </div>
-      <div style="display:flex;gap:0.5rem">
-        <button class="btn btn-secondary" onclick="switchPanel('map', document.querySelector('[onclick*=map]'))">🗺️ Live Map</button>
-        <button class="btn btn-primary" onclick="switchPanel('allocate', document.querySelector('[onclick*=allocate]'))">⚡ Auto-Allocate</button>
-      </div>
+      <button class="btn btn-primary" onclick="switchPanel('allocate', document.querySelector('[onclick*=allocate]'))">⚡ Auto-Allocate</button>
     </div>
+
     <div class="stats-row" id="dashStats"></div>
+
     <div class="ai-insight">
       <div class="ai-icon">🤖</div>
-      <div class="ai-text" id="aiInsightText"><strong>AI INSIGHT:</strong> Add volunteers and task areas to get started.</div>
+      <div class="ai-text" id="aiInsightText">
+        <strong>AI INSIGHT:</strong> Add volunteers and task areas to get started. VolunteerOS will analyze skills, availability, and area urgency to generate an optimized allocation automatically.
+      </div>
     </div>
+
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;">
       <div class="card">
-        <div class="card-header"><span class="card-title">// RECENT ALLOCATIONS</span></div>
+        <div class="card-header">
+          <span class="card-title">// RECENT ALLOCATIONS</span>
+        </div>
         <div id="recentAllocations"><div class="empty-state"><div class="empty-icon">📋</div>No allocations yet. Run Auto-Allocate to begin.</div></div>
       </div>
       <div class="card">
-        <div class="card-header"><span class="card-title">// AREA STATUS</span></div>
+        <div class="card-header">
+          <span class="card-title">// AREA STATUS</span>
+        </div>
         <div id="areaStatus"><div class="empty-state"><div class="empty-icon">📍</div>No task areas defined.</div></div>
       </div>
     </div>
   </div>
 
-  <!-- ═══ VOLUNTEERS ═══ -->
+  <!-- ═══════════ VOLUNTEERS ═══════════ -->
   <div id="panel-volunteers" class="panel">
     <div class="section-header">
-      <div><div class="section-title">// VOLUNTEER REGISTRY</div><div class="section-sub">Manage volunteer profiles and availability</div></div>
+      <div>
+        <div class="section-title">// VOLUNTEER REGISTRY</div>
+        <div class="section-sub">Manage volunteer profiles and availability</div>
+      </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <input class="search-box" placeholder="🔍 Search volunteers..." oninput="renderVolunteers(this.value)" style="width:200px">
         <button class="btn btn-primary" onclick="openModal('volModal')">+ Add Volunteer</button>
       </div>
     </div>
     <div class="volunteer-grid" id="volunteerGrid">
-      <div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👥</div>No volunteers added.</div>
+      <div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👥</div>No volunteers added. Click "+ Add Volunteer" to begin.</div>
     </div>
   </div>
 
-  <!-- ═══ TASK AREAS ═══ -->
+  <!-- ═══════════ TASK AREAS ═══════════ -->
   <div id="panel-areas" class="panel">
     <div class="section-header">
-      <div><div class="section-title">// TASK AREAS</div><div class="section-sub">Define locations and operational requirements</div></div>
+      <div>
+        <div class="section-title">// TASK AREAS</div>
+        <div class="section-sub">Define locations and operational requirements</div>
+      </div>
       <button class="btn btn-primary" onclick="openModal('areaModal')">+ Add Area</button>
     </div>
     <div class="area-grid" id="areaGrid">
@@ -436,47 +584,19 @@
     </div>
   </div>
 
-  <!-- ═══ MAP PANEL ═══ -->
-  <div id="panel-map" class="panel">
-    <div class="map-topbar">
-      <span class="map-topbar-title">🗺️ // LIVE VOLUNTEER MAP</span>
-      <div class="map-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#ef4444;box-shadow:0 0 6px #ef4444"></div>High Urgency</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Medium</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Low</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;border:2px solid #60a5fa"></div>Available Vol.</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#00d4aa;border:2px solid #00d4aa"></div>Deployed Vol.</div>
-      </div>
-      <button class="btn btn-primary btn-sm" onclick="refreshMap()" style="margin-left:auto">🔄 Refresh</button>
-    </div>
-    <div class="map-body">
-      <div id="mapLeaflet"></div>
-      <!-- Floating sidebar -->
-      <div class="map-sidebar-panel">
-        <div style="font-family:var(--mono);font-size:0.78rem;color:var(--accent);margin-bottom:0.75rem;letter-spacing:0.04em">// AREA OVERVIEW</div>
-        <div class="map-stats-row" id="mapStatsMini"></div>
-        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-dim);margin-bottom:0.4rem;font-family:var(--mono)">Filter</div>
-        <div class="map-filter-row">
-          <button class="map-filter-btn active" onclick="setMapFilter('all',this)">ALL</button>
-          <button class="map-filter-btn" onclick="setMapFilter('high',this)">🔴 HIGH</button>
-          <button class="map-filter-btn" onclick="setMapFilter('medium',this)">🟡 MED</button>
-          <button class="map-filter-btn" onclick="setMapFilter('low',this)">🟢 LOW</button>
-        </div>
-        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-dim);margin-bottom:0.5rem;font-family:var(--mono)">Areas</div>
-        <div class="map-area-list" id="mapAreaList"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ ROSTER ═══ -->
+  <!-- ═══════════ ROSTER ═══════════ -->
   <div id="panel-roster" class="panel">
     <div class="section-header">
-      <div><div class="section-title">// DUTY ROSTER</div><div class="section-sub">Shift-wise allocation schedule</div></div>
+      <div>
+        <div class="section-title">// DUTY ROSTER</div>
+        <div class="section-sub">Shift-wise allocation schedule</div>
+      </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <button class="btn btn-blue" onclick="exportRoster()">💾 Export CSV</button>
         <button class="btn btn-secondary" onclick="printRoster()">🖨️ Print</button>
       </div>
     </div>
+
     <div class="roster-controls">
       <span style="font-size:0.78rem;color:var(--text-muted);font-family:var(--mono)">SHIFT:</span>
       <button class="shift-btn active" onclick="filterShift('all',this)">ALL</button>
@@ -485,24 +605,48 @@
       <button class="shift-btn" onclick="filterShift('Night',this)">🌙 NIGHT</button>
       <input class="search-box" placeholder="🔍 Filter roster..." oninput="filterRoster(this.value)" style="margin-left:auto">
     </div>
-    <div class="table-wrap">
+
+    <div class="table-wrap" id="rosterTableWrap">
       <table>
-        <thead><tr><th>#</th><th>Volunteer</th><th>ID</th><th>Area / Location</th><th>Task Type</th><th>Shift</th><th>Date</th><th>Skills</th><th>Priority</th><th>Status</th></tr></thead>
-        <tbody id="rosterBody"><tr><td colspan="10"><div class="empty-state"><div class="empty-icon">📋</div>No roster generated yet.</div></td></tr></tbody>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Volunteer</th>
+            <th>ID</th>
+            <th>Area / Location</th>
+            <th>Task Type</th>
+            <th>Shift</th>
+            <th>Date</th>
+            <th>Skills</th>
+            <th>Priority</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="rosterBody">
+          <tr><td colspan="10"><div class="empty-state"><div class="empty-icon">📋</div>No roster generated yet. Go to Auto-Allocate to generate.</div></td></tr>
+        </tbody>
       </table>
     </div>
   </div>
 
-  <!-- ═══ AUTO ALLOCATE ═══ -->
+  <!-- ═══════════ AUTO ALLOCATE ═══════════ -->
   <div id="panel-allocate" class="panel">
     <div class="section-header">
-      <div><div class="section-title">// AUTO-ALLOCATE ENGINE</div><div class="section-sub">AI-powered smart volunteer matching</div></div>
+      <div>
+        <div class="section-title">// AUTO-ALLOCATE ENGINE</div>
+        <div class="section-sub">AI-powered smart volunteer matching</div>
+      </div>
     </div>
+
     <div class="card" style="margin-bottom:1rem;">
       <div class="card-header"><span class="card-title">// ALLOCATION PARAMETERS</span></div>
       <div class="form-grid">
-        <div class="form-group"><label>Allocation Date</label><input type="date" id="allocDate"></div>
-        <div class="form-group"><label>Shift</label>
+        <div class="form-group">
+          <label>Allocation Date</label>
+          <input type="date" id="allocDate">
+        </div>
+        <div class="form-group">
+          <label>Shift</label>
           <select id="allocShift">
             <option value="Morning">Morning (6AM – 2PM)</option>
             <option value="Evening">Evening (2PM – 10PM)</option>
@@ -510,24 +654,30 @@
             <option value="All">All Shifts</option>
           </select>
         </div>
-        <div class="form-group"><label>Strategy</label>
+        <div class="form-group">
+          <label>Strategy</label>
           <select id="allocStrategy">
             <option value="balanced">Balanced Workload</option>
             <option value="skillmatch">Skill-Priority Match</option>
             <option value="urgency">Urgency-First</option>
           </select>
         </div>
-        <div class="form-group"><label>Max Volunteers/Area</label><input type="number" id="allocMax" value="3" min="1" max="20"></div>
+        <div class="form-group">
+          <label>Max Volunteers/Area</label>
+          <input type="number" id="allocMax" value="3" min="1" max="20">
+        </div>
       </div>
       <div style="margin-top:1rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
         <button class="btn btn-primary" onclick="runAllocation()">⚡ Generate Allocation</button>
         <button class="btn btn-danger" onclick="clearRoster()">🗑️ Clear Roster</button>
       </div>
     </div>
+
     <div class="ai-insight" id="allocInsight">
       <div class="ai-icon">🤖</div>
-      <div class="ai-text">Configure parameters above and click <strong>Generate Allocation</strong> to begin smart matching.</div>
+      <div class="ai-text">Configure parameters above and click <strong>Generate Allocation</strong> to begin smart matching. The engine will cross-reference skills, availability, workload fairness, and area urgency.</div>
     </div>
+
     <div id="allocPreview" style="display:none;">
       <div class="card-header" style="margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
         <span class="card-title">// ALLOCATION PREVIEW</span>
@@ -535,179 +685,40 @@
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Volunteer</th><th>Area</th><th>Task</th><th>Shift</th><th>Match Score</th><th>Priority</th></tr></thead>
+          <thead>
+            <tr><th>#</th><th>Volunteer</th><th>Area</th><th>Task</th><th>Shift</th><th>Match Score</th><th>Priority</th></tr>
+          </thead>
           <tbody id="allocPreviewBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- ═══ ANALYTICS ═══ -->
+  <!-- ═══════════ ANALYTICS ═══════════ -->
   <div id="panel-analytics" class="panel">
     <div class="section-header">
-      <div><div class="section-title">// ANALYTICS</div><div class="section-sub">Volunteer deployment metrics & insights</div></div>
+      <div>
+        <div class="section-title">// ANALYTICS</div>
+        <div class="section-sub">Volunteer deployment metrics & insights</div>
+      </div>
     </div>
     <div class="stats-row" id="analyticsStats"></div>
     <div class="analytics-grid">
-      <div class="card"><div class="card-header"><span class="card-title">// VOLUNTEERS BY AREA</span></div><div class="bar-chart" id="chartByArea"></div></div>
-      <div class="card"><div class="card-header"><span class="card-title">// SKILLS DISTRIBUTION</span></div><div class="bar-chart" id="chartBySkill"></div></div>
-      <div class="card"><div class="card-header"><span class="card-title">// ALLOCATIONS BY SHIFT</span></div><div class="bar-chart" id="chartByShift"></div></div>
-      <div class="card"><div class="card-header"><span class="card-title">// AREA URGENCY OVERVIEW</span></div><div class="bar-chart" id="chartByUrgency"></div></div>
-    </div>
-  </div>
-
-
-
-
-  <!-- ═══ INTELLIGENCE ═══ -->
-  <div id="panel-intelligence" class="panel">
-    <div class="section-header">
-      <div><div class="section-title">// INTELLIGENCE CENTER</div><div class="section-sub">Situational reports, field intel, and assessments</div></div>
-      <button class="btn btn-primary" onclick="openModal('intelModal')">+ Log Report</button>
-    </div>
-    <div class="stats-row" id="intelStats"></div>
-    <!-- Tabs -->
-    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;flex-wrap:wrap;">
-      <button class="shift-btn active" onclick="filterIntel('all',this)">ALL REPORTS</button>
-      <button class="shift-btn" onclick="filterIntel('field',this)">📡 FIELD</button>
-      <button class="shift-btn" onclick="filterIntel('assessment',this)">📊 ASSESSMENT</button>
-      <button class="shift-btn" onclick="filterIntel('incident',this)">⚠️ INCIDENT</button>
-    </div>
-    <div id="intelList"></div>
-  </div>
-
-  <!-- ═══ EMERGENCY ═══ -->
-  <div id="panel-emergency" class="panel">
-    <div class="section-header">
-      <div><div class="section-title">// EMERGENCY COMMAND</div><div class="section-sub">Active incidents, SOS dispatch, and crisis coordination</div></div>
-      <button class="btn btn-danger" onclick="openModal('emergencyModal')" style="animation:emergPulse 2s infinite;">🚨 Declare Emergency</button>
-    </div>
-    <!-- Active emergencies banner -->
-    <div id="emergencyBanner" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.4);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
-      <span style="font-size:1.5rem">🚨</span>
-      <div><div style="font-family:var(--mono);font-size:0.85rem;color:var(--danger)">ACTIVE EMERGENCY INCIDENTS</div><div id="emergencyBannerText" style="font-size:0.78rem;color:var(--text-muted);margin-top:0.2rem"></div></div>
-    </div>
-    <!-- Tabs -->
-    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;flex-wrap:wrap;">
-      <button class="shift-btn active" onclick="filterEmergency('all',this)">ALL</button>
-      <button class="shift-btn" onclick="filterEmergency('active',this)">🔴 ACTIVE</button>
-      <button class="shift-btn" onclick="filterEmergency('contained',this)">🟡 CONTAINED</button>
-      <button class="shift-btn" onclick="filterEmergency('resolved',this)">🟢 RESOLVED</button>
-    </div>
-    <div id="emergencyList"></div>
-  </div>
-
-  <!-- ═══ ALERTS ═══ -->
-  <div id="panel-alerts" class="panel">
-    <div class="section-header">
-      <div><div class="section-title">// ALERTS CENTER</div><div class="section-sub">System alerts, broadcast messages, and notifications</div></div>
-      <div style="display:flex;gap:0.5rem;">
-        <button class="btn btn-amber" onclick="openModal('alertModal')">📢 Broadcast Alert</button>
-        <button class="btn btn-secondary" onclick="clearAllAlerts()">🗑️ Clear All</button>
-      </div>
-    </div>
-    <!-- Tabs -->
-    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;flex-wrap:wrap;">
-      <button class="shift-btn active" onclick="filterAlerts('all',this)">ALL</button>
-      <button class="shift-btn" onclick="filterAlerts('critical',this)">🔴 CRITICAL</button>
-      <button class="shift-btn" onclick="filterAlerts('warning',this)">🟡 WARNING</button>
-      <button class="shift-btn" onclick="filterAlerts('info',this)">🔵 INFO</button>
-    </div>
-    <div id="alertsList"></div>
-  </div>
-
-  <!-- ═══ SETTINGS ═══ -->
-  <div id="panel-settings" class="panel">
-    <div class="section-header">
-      <div><div class="section-title">// SYSTEM SETTINGS</div><div class="section-sub">Configure VolunteerOS preferences and system options</div></div>
-    </div>
-    <!-- Tabs -->
-    <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;flex-wrap:wrap;" id="settingsTabs">
-      <button class="shift-btn active" onclick="switchSettingsTab('general',this)">⚙️ General</button>
-      <button class="shift-btn" onclick="switchSettingsTab('notifications',this)">🔔 Notifications</button>
-      <button class="shift-btn" onclick="switchSettingsTab('map',this)">🗺️ Map</button>
-      <button class="shift-btn" onclick="switchSettingsTab('data',this)">💾 Data</button>
-    </div>
-    <div id="settings-tab-general">
-      <div class="card" style="margin-bottom:1rem">
-        <div class="card-header"><span class="card-title">// ORGANIZATION PROFILE</span></div>
-        <div class="form-grid">
-          <div class="form-group"><label>Organization Name</label><input type="text" id="settOrgName" placeholder="e.g. Bengaluru Relief Network" value="VolunteerOS Command"></div>
-          <div class="form-group"><label>Command Center Location</label><input type="text" id="settLocation" placeholder="e.g. Bengaluru, Karnataka" value="Bengaluru, Karnataka"></div>
-          <div class="form-group"><label>Default Language</label><select id="settLang"><option value="en">English</option><option value="hi">Hindi</option><option value="kn">Kannada</option></select></div>
-          <div class="form-group"><label>Timezone</label><select id="settTz"><option>Asia/Kolkata (IST)</option><option>UTC</option></select></div>
-        </div>
-        <div style="margin-top:1rem"><button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button></div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">// VOLUNTEERS BY AREA</span></div>
+        <div class="bar-chart" id="chartByArea"><div class="empty-state">No data</div></div>
       </div>
       <div class="card">
-        <div class="card-header"><span class="card-title">// SYSTEM STATUS</span></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem;">
-          <div style="background:var(--surface3);border-radius:8px;padding:0.75rem;font-size:0.8rem;">
-            <div style="color:var(--text-muted);font-family:var(--mono);font-size:0.68rem;margin-bottom:0.3rem">VERSION</div>
-            <div style="font-family:var(--mono);color:var(--accent)">VolunteerOS v2.1</div>
-          </div>
-          <div style="background:var(--surface3);border-radius:8px;padding:0.75rem;font-size:0.8rem;">
-            <div style="color:var(--text-muted);font-family:var(--mono);font-size:0.68rem;margin-bottom:0.3rem">MAP ENGINE</div>
-            <div style="font-family:var(--mono);color:var(--success)">Leaflet 1.9.4 ✓</div>
-          </div>
-          <div style="background:var(--surface3);border-radius:8px;padding:0.75rem;font-size:0.8rem;">
-            <div style="color:var(--text-muted);font-family:var(--mono);font-size:0.68rem;margin-bottom:0.3rem">STORAGE</div>
-            <div style="font-family:var(--mono);color:var(--accent2)" id="settStorageInfo">Calculating...</div>
-          </div>
-          <div style="background:var(--surface3);border-radius:8px;padding:0.75rem;font-size:0.8rem;">
-            <div style="color:var(--text-muted);font-family:var(--mono);font-size:0.68rem;margin-bottom:0.3rem">AI STATUS</div>
-            <div style="font-family:var(--mono);color:var(--success)">⚡ READY</div>
-          </div>
-        </div>
+        <div class="card-header"><span class="card-title">// SKILLS DISTRIBUTION</span></div>
+        <div class="bar-chart" id="chartBySkill"><div class="empty-state">No data</div></div>
       </div>
-    </div>
-    <div id="settings-tab-notifications" style="display:none">
       <div class="card">
-        <div class="card-header"><span class="card-title">// NOTIFICATION PREFERENCES</span></div>
-        <div style="display:flex;flex-direction:column;gap:1rem;">
-          ${['Emergency Alerts','Roster Changes','New Volunteer Signup','Area Capacity Warnings','Daily Summary Report','Auto-Allocation Completion'].map((item,i)=>`
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.75rem;background:var(--surface3);border-radius:8px;">
-            <div>
-              <div style="font-size:0.85rem;font-weight:500">${item}</div>
-              <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.15rem">Receive push notifications for ${item.toLowerCase()}</div>
-            </div>
-            <label style="position:relative;display:inline-block;width:40px;height:22px;cursor:pointer">
-              <input type="checkbox" ${i<3?'checked':''} style="opacity:0;width:0;height:0" onchange="this.parentElement.querySelector('.toggle-track').style.background=this.checked?'var(--accent)':'var(--surface2)'">
-              <span class="toggle-track" style="position:absolute;inset:0;border-radius:22px;background:${i<3?'var(--accent)':'var(--surface2)'};border:1px solid var(--border);transition:0.2s">
-                <span style="position:absolute;top:2px;left:${i<3?'20':'2'}px;width:16px;height:16px;border-radius:50%;background:#fff;transition:0.2s"></span>
-              </span>
-            </label>
-          </div>`).join('')}
-        </div>
+        <div class="card-header"><span class="card-title">// ALLOCATIONS BY SHIFT</span></div>
+        <div class="bar-chart" id="chartByShift"><div class="empty-state">No data</div></div>
       </div>
-    </div>
-    <div id="settings-tab-map" style="display:none">
       <div class="card">
-        <div class="card-header"><span class="card-title">// MAP CONFIGURATION</span></div>
-        <div class="form-grid">
-          <div class="form-group"><label>Default Map Center (Latitude)</label><input type="number" id="settMapLat" value="12.9716" step="any"></div>
-          <div class="form-group"><label>Default Map Center (Longitude)</label><input type="number" id="settMapLng" value="77.5946" step="any"></div>
-          <div class="form-group"><label>Default Zoom Level</label><input type="number" id="settMapZoom" value="12" min="5" max="18"></div>
-          <div class="form-group"><label>Map Tile Style</label>
-            <select id="settMapStyle">
-              <option value="voyager">CARTO Voyager (Default)</option>
-              <option value="dark">CARTO Dark Matter</option>
-              <option value="positron">CARTO Positron</option>
-            </select>
-          </div>
-        </div>
-        <div style="margin-top:1rem"><button class="btn btn-primary" onclick="saveMapSettings()">💾 Apply Map Settings</button></div>
-      </div>
-    </div>
-    <div id="settings-tab-data" style="display:none">
-      <div class="card" style="margin-bottom:1rem">
-        <div class="card-header"><span class="card-title">// DATA MANAGEMENT</span></div>
-        <div style="display:flex;flex-direction:column;gap:0.75rem;">
-          <button class="btn btn-blue" onclick="exportAllData()">📦 Export All Data (JSON)</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📂 Import Data (JSON)</button>
-          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
-          <button class="btn btn-danger" onclick="resetAll()">🗑️ Reset All Data</button>
-        </div>
+        <div class="card-header"><span class="card-title">// AREA URGENCY OVERVIEW</span></div>
+        <div class="bar-chart" id="chartByUrgency"><div class="empty-state">No data</div></div>
       </div>
     </div>
   </div>
@@ -715,7 +726,8 @@
 </main>
 </div>
 
-<!-- ═══ MODALS ═══ -->
+<!-- ═══════════ MODALS ═══════════ -->
+
 <!-- Add Volunteer Modal -->
 <div class="modal-overlay" id="volModal">
   <div class="modal">
@@ -724,14 +736,35 @@
       <button class="modal-close" onclick="closeModal('volModal')">✕</button>
     </div>
     <div class="form-grid">
-      <div class="form-group"><label>Full Name *</label><input type="text" id="vName" placeholder="e.g. Priya Sharma"></div>
-      <div class="form-group"><label>Volunteer ID *</label><input type="text" id="vId" placeholder="e.g. VOL-2024-001"></div>
-      <div class="form-group"><label>Phone</label><input type="text" id="vPhone" placeholder="+91 9876543210"></div>
-      <div class="form-group"><label>Availability Date</label><input type="date" id="vDate"></div>
-      <div class="form-group"><label>Preferred Shift</label>
-        <select id="vShift"><option>Morning</option><option>Evening</option><option>Night</option><option>Any</option></select>
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="vName" placeholder="e.g. Priya Sharma">
       </div>
-      <div class="form-group"><label>Experience (years)</label><input type="number" id="vExp" value="0" min="0" max="40"></div>
+      <div class="form-group">
+        <label>Volunteer ID *</label>
+        <input type="text" id="vId" placeholder="e.g. VOL-2024-001">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" id="vPhone" placeholder="+91 9876543210">
+      </div>
+      <div class="form-group">
+        <label>Availability Date</label>
+        <input type="date" id="vDate">
+      </div>
+      <div class="form-group">
+        <label>Preferred Shift</label>
+        <select id="vShift">
+          <option>Morning</option>
+          <option>Evening</option>
+          <option>Night</option>
+          <option>Any</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Experience (years)</label>
+        <input type="number" id="vExp" value="0" min="0" max="40">
+      </div>
     </div>
     <div class="form-group" style="margin-top:1rem;">
       <label>Skills (select all that apply)</label>
@@ -770,32 +803,46 @@
       <button class="modal-close" onclick="closeModal('areaModal')">✕</button>
     </div>
     <div class="form-grid">
-      <div class="form-group"><label>Area Name *</label><input type="text" id="aName" placeholder="e.g. Flood Relief Camp – Sector 4"></div>
-      <div class="form-group"><label>Task Type *</label>
+      <div class="form-group">
+        <label>Area Name *</label>
+        <input type="text" id="aName" placeholder="e.g. Flood Relief Camp – Sector 4">
+      </div>
+      <div class="form-group">
+        <label>Task Type *</label>
         <select id="aTask">
-          <option>Food Distribution</option><option>Medical Aid</option><option>Rescue Operation</option>
-          <option>Shelter Management</option><option>Education Support</option><option>Survey & Assessment</option>
-          <option>Community Outreach</option><option>Sanitation & Hygiene</option>
-          <option>Emergency Response</option><option>Counselling</option><option>Logistics & Supply</option><option>Other</option>
+          <option>Food Distribution</option>
+          <option>Medical Aid</option>
+          <option>Rescue Operation</option>
+          <option>Shelter Management</option>
+          <option>Education Support</option>
+          <option>Survey & Assessment</option>
+          <option>Community Outreach</option>
+          <option>Sanitation & Hygiene</option>
+          <option>Emergency Response</option>
+          <option>Counselling</option>
+          <option>Logistics & Supply</option>
+          <option>Other</option>
         </select>
       </div>
-      <div class="form-group"><label>Location / Address</label><input type="text" id="aLocation" placeholder="e.g. Ward 12, Bengaluru"></div>
-      <div class="form-group"><label>Urgency Level</label>
+      <div class="form-group">
+        <label>Location / Address</label>
+        <input type="text" id="aLocation" placeholder="e.g. Ward 12, Bengaluru">
+      </div>
+      <div class="form-group">
+        <label>Urgency Level</label>
         <select id="aUrgency">
           <option value="high">🔴 High – Immediate Need</option>
           <option value="medium">🟡 Medium – Active Need</option>
           <option value="low">🟢 Low – Routine</option>
         </select>
       </div>
-      <div class="form-group"><label>Volunteers Required</label><input type="number" id="aRequired" value="2" min="1" max="50"></div>
-      <div class="form-group"><label>Coordinator Name</label><input type="text" id="aCoord" placeholder="NGO Coordinator Name"></div>
       <div class="form-group">
-        <label>Latitude (for map)</label>
-        <input type="number" id="aLat" placeholder="e.g. 12.9716" step="any">
+        <label>Volunteers Required</label>
+        <input type="number" id="aRequired" value="2" min="1" max="50">
       </div>
       <div class="form-group">
-        <label>Longitude (for map)</label>
-        <input type="number" id="aLng" placeholder="e.g. 77.5946" step="any">
+        <label>Coordinator Name</label>
+        <input type="text" id="aCoord" placeholder="NGO Coordinator Name">
       </div>
     </div>
     <div class="form-group" style="margin-top:1rem;">
@@ -827,153 +874,38 @@
   </div>
 </div>
 
+<!-- Toast container -->
 <div class="toast-container" id="toastContainer"></div>
-
-<!-- Intelligence Report Modal -->
-<div class="modal-overlay" id="intelModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">// LOG INTELLIGENCE REPORT</span>
-      <button class="modal-close" onclick="closeModal('intelModal')">✕</button>
-    </div>
-    <div class="form-grid">
-      <div class="form-group"><label>Report Title *</label><input type="text" id="intelTitle" placeholder="e.g. Flood situation update – Ward 12"></div>
-      <div class="form-group"><label>Report Type</label>
-        <select id="intelType">
-          <option value="field">📡 Field Report</option>
-          <option value="assessment">📊 Assessment</option>
-          <option value="incident">⚠️ Incident Report</option>
-          <option value="general">📝 General</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Location</label><input type="text" id="intelLocation" placeholder="e.g. Koramangala, Bengaluru"></div>
-      <div class="form-group"><label>Severity</label>
-        <select id="intelSeverity">
-          <option value="critical">🔴 Critical</option>
-          <option value="high">🟠 High</option>
-          <option value="medium" selected>🟡 Medium</option>
-          <option value="low">🟢 Low</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Reported By</label><input type="text" id="intelReporter" placeholder="Officer / Volunteer name"></div>
-    </div>
-    <div class="form-group" style="margin-top:1rem;">
-      <label>Report Details *</label>
-      <textarea id="intelDetails" rows="4" placeholder="Describe the situation, observations, and recommended actions..."></textarea>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('intelModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveIntelReport()">📋 Submit Report</button>
-    </div>
-  </div>
-</div>
-
-<!-- Emergency Modal -->
-<div class="modal-overlay" id="emergencyModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" style="color:var(--danger)">🚨 // DECLARE EMERGENCY</span>
-      <button class="modal-close" onclick="closeModal('emergencyModal')">✕</button>
-    </div>
-    <div class="form-grid">
-      <div class="form-group"><label>Incident Name *</label><input type="text" id="emName" placeholder="e.g. Flood – Sector 4"></div>
-      <div class="form-group"><label>Type</label>
-        <select id="emType">
-          <option>🌊 Flood</option><option>🔥 Fire</option><option>🏚️ Building Collapse</option>
-          <option>🏥 Medical Mass Casualty</option><option>⚡ Power Outage</option><option>🌪️ Storm</option>
-          <option>🚗 Road Accident</option><option>☣️ Hazmat</option><option>🆘 Missing Persons</option><option>Other</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Location *</label><input type="text" id="emLocation" placeholder="Specific address or zone"></div>
-      <div class="form-group"><label>Severity Level</label>
-        <select id="emSeverity">
-          <option value="critical">🔴 Critical – Life Threatening</option>
-          <option value="high">🟠 High – Major Impact</option>
-          <option value="medium">🟡 Medium – Moderate Impact</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Reported By</label><input type="text" id="emReporter" placeholder="Name / ID"></div>
-      <div class="form-group"><label>People Affected (est.)</label><input type="number" id="emAffected" value="0" min="0"></div>
-    </div>
-    <div class="form-group" style="margin-top:1rem;">
-      <label>Situation Details</label>
-      <textarea id="emDetails" rows="3" placeholder="Describe the emergency situation and immediate needs..."></textarea>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('emergencyModal')">Cancel</button>
-      <button class="btn btn-danger" onclick="saveEmergency()">🚨 Declare Emergency</button>
-    </div>
-  </div>
-</div>
-
-<!-- Alert Broadcast Modal -->
-<div class="modal-overlay" id="alertModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">// BROADCAST ALERT</span>
-      <button class="modal-close" onclick="closeModal('alertModal')">✕</button>
-    </div>
-    <div class="form-grid">
-      <div class="form-group"><label>Alert Title *</label><input type="text" id="alTitle" placeholder="e.g. Volunteer shift change notice"></div>
-      <div class="form-group"><label>Alert Level</label>
-        <select id="alLevel">
-          <option value="critical">🔴 Critical</option>
-          <option value="warning">🟡 Warning</option>
-          <option value="info" selected>🔵 Info</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Target Audience</label>
-        <select id="alTarget">
-          <option>All Personnel</option><option>Volunteers Only</option><option>Officers Only</option>
-          <option>Coordinators Only</option><option>Field Teams</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group" style="margin-top:1rem;">
-      <label>Alert Message *</label>
-      <textarea id="alMessage" rows="3" placeholder="Enter the alert message to broadcast..."></textarea>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('alertModal')">Cancel</button>
-      <button class="btn btn-amber" onclick="saveAlert()">📢 Broadcast</button>
-    </div>
-  </div>
-</div>
 
 <script>
 // ═══════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════
 let volunteers = JSON.parse(localStorage.getItem('vos_volunteers') || '[]');
-let areas      = JSON.parse(localStorage.getItem('vos_areas')      || '[]');
-let roster     = JSON.parse(localStorage.getItem('vos_roster')     || '[]');
-let intelReports = JSON.parse(localStorage.getItem('vos_intel')    || '[]');
-let emergencies  = JSON.parse(localStorage.getItem('vos_emergencies') || '[]');
-let alertsData   = JSON.parse(localStorage.getItem('vos_alerts')   || '[]');
+let areas = JSON.parse(localStorage.getItem('vos_areas') || '[]');
+let roster = JSON.parse(localStorage.getItem('vos_roster') || '[]');
 let pendingAllocation = [];
 
-// Map globals
-let leafletMap = null;
-let mapMarkers = [];
-let mapFilter  = 'all';
-
-// Bengaluru base locations for sample data
-const BENGALURU_LOCATIONS = [
-  { lat: 12.9352, lng: 77.5765 }, // Koramangala
-  { lat: 12.9716, lng: 77.5946 }, // City centre
-  { lat: 13.0355, lng: 77.5970 }, // Hebbal
-  { lat: 12.9279, lng: 77.6271 }, // Jayanagar
-  { lat: 13.1004, lng: 77.5963 }, // Yelahanka
-];
+const SKILLS = ['🏥 Medical','🚛 Logistics','📚 Teaching','🔥 Rescue','🍲 Food Service','🔧 Technical','📣 Communication','🧹 Sanitation','🧠 Counselling','📊 Survey','💊 First Aid','🌐 Translation'];
+const SHIFT_TIMES = { Morning:'6AM–2PM', Evening:'2PM–10PM', Night:'10PM–6AM', All:'All Day' };
 
 function save() {
   localStorage.setItem('vos_volunteers', JSON.stringify(volunteers));
-  localStorage.setItem('vos_areas',      JSON.stringify(areas));
-  localStorage.setItem('vos_roster',     JSON.stringify(roster));
-  localStorage.setItem('vos_intel',      JSON.stringify(intelReports));
-  localStorage.setItem('vos_emergencies',JSON.stringify(emergencies));
-  localStorage.setItem('vos_alerts',     JSON.stringify(alertsData));
+  localStorage.setItem('vos_areas', JSON.stringify(areas));
+  localStorage.setItem('vos_roster', JSON.stringify(roster));
 }
+
+function showAlerts() {
+  const urgentAreas = areas.filter(a => a.urgency === 'high');
+  const undeployed = volunteers.filter(v => !roster.find(r => r.volId === v.id));
+  let msg = '';
+  if (urgentAreas.length) msg += `🔴 ${urgentAreas.length} HIGH urgency area(s) need attention. `;
+  if (undeployed.length) msg += `⚠️ ${undeployed.length} volunteer(s) not yet deployed.`;
+  if (!msg) msg = '✅ All areas covered. No active alerts.';
+  toast(msg, urgentAreas.length ? 'error' : 'success');
+  closeSidebar();
+}
+
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
 // ═══════════════════════════════════════
@@ -984,20 +916,20 @@ function switchPanel(id, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('panel-' + id).classList.add('active');
   if (el) el.classList.add('active');
-  if (id === 'dashboard')    { refreshDashboard(); }
-  if (id === 'volunteers')   { renderVolunteers(); }
-  if (id === 'areas')        { renderAreas(); }
-  if (id === 'roster')       { renderRoster(); }
-  if (id === 'analytics')    { renderAnalytics(); }
-  if (id === 'map')          { setTimeout(() => { initOrRefreshMap(); }, 50); }
-  if (id === 'intelligence') { renderIntelligence(); }
-  if (id === 'emergency')    { renderEmergency(); }
-  if (id === 'alerts')       { renderAlerts(); }
-  if (id === 'settings')     { initSettings(); }
+  if (id === 'dashboard') refreshDashboard();
+  if (id === 'volunteers') renderVolunteers();
+  if (id === 'areas') renderAreas();
+  if (id === 'roster') renderRoster();
+  if (id === 'analytics') renderAnalytics();
   closeSidebar();
 }
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-function closeSidebar()  { document.getElementById('sidebar').classList.remove('open'); }
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+}
 
 // ═══════════════════════════════════════
 //  CLOCK
@@ -1016,28 +948,30 @@ updateClock();
 // ═══════════════════════════════════════
 function openModal(id) {
   document.getElementById(id).classList.add('open');
-  if (id === 'volModal')      resetVolForm();
-  if (id === 'areaModal')     resetAreaForm();
+  if (id === 'volModal') resetVolForm();
+  if (id === 'areaModal') resetAreaForm();
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// close on overlay click
 document.querySelectorAll('.modal-overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
 });
 
 // ═══════════════════════════════════════
-//  SKILLS
+//  SKILL TOGGLES
 // ═══════════════════════════════════════
 function toggleSkill(el) { el.classList.toggle('selected'); }
-function getSelectedSkills(cid) {
-  return [...document.querySelectorAll(`#${cid} .skill-tag.selected`)].map(t => t.textContent.trim());
+function getSelectedSkills(containerId) {
+  return [...document.querySelectorAll(`#${containerId} .skill-tag.selected`)].map(t => t.textContent.trim());
 }
-function resetSkills(cid) {
-  document.querySelectorAll(`#${cid} .skill-tag`).forEach(t => t.classList.remove('selected'));
+function resetSkills(containerId) {
+  document.querySelectorAll(`#${containerId} .skill-tag`).forEach(t => t.classList.remove('selected'));
 }
-function setSkills(cid, list) {
-  resetSkills(cid);
-  document.querySelectorAll(`#${cid} .skill-tag`).forEach(t => {
-    if (list.includes(t.textContent.trim())) t.classList.add('selected');
+function setSkills(containerId, skillList) {
+  resetSkills(containerId);
+  document.querySelectorAll(`#${containerId} .skill-tag`).forEach(t => {
+    if (skillList.includes(t.textContent.trim())) t.classList.add('selected');
   });
 }
 
@@ -1045,25 +979,27 @@ function setSkills(cid, list) {
 //  VOLUNTEERS
 // ═══════════════════════════════════════
 function resetVolForm() {
-  ['vName','vId','vPhone','vDate','vNotes','vEditId'].forEach(id => document.getElementById(id).value='');
+  ['vName','vId','vPhone','vDate','vNotes','vEditId'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('vShift').value = 'Morning';
   document.getElementById('vExp').value = '0';
   resetSkills('skillsSelector');
   document.querySelector('#volModal .modal-title').textContent = '// ADD VOLUNTEER';
 }
+
 function saveVolunteer() {
   const name = document.getElementById('vName').value.trim();
-  const vid  = document.getElementById('vId').value.trim();
-  if (!name || !vid) { toast('Name and ID are required.','error'); return; }
+  const vid = document.getElementById('vId').value.trim();
+  if (!name || !vid) { toast('Name and ID are required.', 'error'); return; }
+  const skills = getSelectedSkills('skillsSelector');
   const obj = {
     id: document.getElementById('vEditId').value || uid(),
     name, vid,
     phone: document.getElementById('vPhone').value.trim(),
-    date:  document.getElementById('vDate').value,
+    date: document.getElementById('vDate').value,
     shift: document.getElementById('vShift').value,
-    exp:   parseInt(document.getElementById('vExp').value)||0,
-    skills: getSelectedSkills('skillsSelector'),
-    notes: document.getElementById('vNotes').value.trim(), assigned: 0
+    exp: parseInt(document.getElementById('vExp').value) || 0,
+    skills, notes: document.getElementById('vNotes').value.trim(),
+    assigned: 0
   };
   const editId = document.getElementById('vEditId').value;
   if (editId) {
@@ -1076,21 +1012,23 @@ function saveVolunteer() {
   }
   save(); closeModal('volModal'); renderVolunteers(); updateBadges(); refreshDashboard();
 }
+
 function editVolunteer(id) {
   const v = volunteers.find(x => x.id === id);
   if (!v) return;
-  document.getElementById('vName').value  = v.name;
-  document.getElementById('vId').value    = v.vid;
-  document.getElementById('vPhone').value = v.phone||'';
-  document.getElementById('vDate').value  = v.date||'';
-  document.getElementById('vShift').value = v.shift||'Morning';
-  document.getElementById('vExp').value   = v.exp||0;
-  document.getElementById('vNotes').value = v.notes||'';
-  document.getElementById('vEditId').value= v.id;
-  setSkills('skillsSelector', v.skills||[]);
+  document.getElementById('vName').value = v.name;
+  document.getElementById('vId').value = v.vid;
+  document.getElementById('vPhone').value = v.phone || '';
+  document.getElementById('vDate').value = v.date || '';
+  document.getElementById('vShift').value = v.shift || 'Morning';
+  document.getElementById('vExp').value = v.exp || 0;
+  document.getElementById('vNotes').value = v.notes || '';
+  document.getElementById('vEditId').value = v.id;
+  setSkills('skillsSelector', v.skills || []);
   document.querySelector('#volModal .modal-title').textContent = '// EDIT VOLUNTEER';
   openModal('volModal');
 }
+
 function deleteVolunteer(id) {
   if (!confirm('Remove this volunteer?')) return;
   volunteers = volunteers.filter(v => v.id !== id);
@@ -1098,30 +1036,35 @@ function deleteVolunteer(id) {
   save(); renderVolunteers(); updateBadges(); refreshDashboard(); renderRoster();
   toast('Volunteer removed.');
 }
-function renderVolunteers(search='') {
+
+function renderVolunteers(search = '') {
   const grid = document.getElementById('volunteerGrid');
   const list = volunteers.filter(v =>
     !search || v.name.toLowerCase().includes(search.toLowerCase()) || v.vid.toLowerCase().includes(search.toLowerCase())
   );
   if (!list.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👥</div>${search?'No volunteers match your search.':'No volunteers added. Click "+ Add Volunteer" to begin.'}</div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👥</div>${search ? 'No volunteers match your search.' : 'No volunteers added. Click "+ Add Volunteer" to begin.'}</div>`;
     return;
   }
   grid.innerHTML = list.map(v => {
-    const initials = v.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const initials = v.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
     const assignedCount = roster.filter(r => r.volId === v.id).length;
-    return `<div class="vol-card">
+    return `
+    <div class="vol-card">
       <div class="vol-header">
         <div class="vol-avatar">${initials}</div>
-        <div><div class="vol-name">${v.name}</div><div class="vol-id">${v.vid}</div></div>
-        <div style="margin-left:auto">${assignedCount>0?`<span class="badge badge-teal">${assignedCount} assigned</span>`:'<span class="badge badge-info">Available</span>'}</div>
+        <div>
+          <div class="vol-name">${v.name}</div>
+          <div class="vol-id">${v.vid}</div>
+        </div>
+        <div style="margin-left:auto">${assignedCount > 0 ? `<span class="badge badge-teal">${assignedCount} assigned</span>` : '<span class="badge badge-info">Available</span>'}</div>
       </div>
-      <div class="vol-skills">${(v.skills||[]).map(s=>`<span class="vol-skill-tag">${s}</span>`).join('')||'<span style="font-size:0.72rem;color:var(--text-dim)">No skills set</span>'}</div>
+      <div class="vol-skills">${(v.skills||[]).map(s=>`<span class="vol-skill-tag">${s}</span>`).join('') || '<span style="font-size:0.72rem;color:var(--text-dim)">No skills set</span>'}</div>
       <div class="vol-info">
         <div class="vol-info-row">🕐 Preferred: <strong>${v.shift}</strong></div>
-        ${v.date?`<div class="vol-info-row">📅 Available: <strong>${v.date}</strong></div>`:''}
-        ${v.exp?`<div class="vol-info-row">⭐ Experience: <strong>${v.exp} yr${v.exp>1?'s':''}</strong></div>`:''}
-        ${v.phone?`<div class="vol-info-row">📞 ${v.phone}</div>`:''}
+        ${v.date ? `<div class="vol-info-row">📅 Available: <strong>${v.date}</strong></div>` : ''}
+        ${v.exp ? `<div class="vol-info-row">⭐ Experience: <strong>${v.exp} yr${v.exp>1?'s':''}</strong></div>` : ''}
+        ${v.phone ? `<div class="vol-info-row">📞 ${v.phone}</div>` : ''}
       </div>
       <div class="vol-actions">
         <button class="btn btn-secondary btn-sm" onclick="editVolunteer('${v.id}')">✏️ Edit</button>
@@ -1135,30 +1078,26 @@ function renderVolunteers(search='') {
 //  AREAS
 // ═══════════════════════════════════════
 function resetAreaForm() {
-  ['aName','aLocation','aCoord','aDesc','aEditId'].forEach(id => document.getElementById(id).value='');
-  document.getElementById('aTask').value='Food Distribution';
-  document.getElementById('aUrgency').value='medium';
-  document.getElementById('aRequired').value='2';
-  document.getElementById('aLat').value='';
-  document.getElementById('aLng').value='';
+  ['aName','aLocation','aCoord','aDesc','aEditId'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('aTask').value = 'Food Distribution';
+  document.getElementById('aUrgency').value = 'medium';
+  document.getElementById('aRequired').value = '2';
   resetSkills('areaSkillsSelector');
   document.querySelector('#areaModal .modal-title').textContent = '// ADD TASK AREA';
 }
+
 function saveArea() {
   const name = document.getElementById('aName').value.trim();
-  if (!name) { toast('Area name is required.','error'); return; }
-  const lat = parseFloat(document.getElementById('aLat').value) || null;
-  const lng = parseFloat(document.getElementById('aLng').value) || null;
+  if (!name) { toast('Area name is required.', 'error'); return; }
+  const skills = getSelectedSkills('areaSkillsSelector');
   const obj = {
     id: document.getElementById('aEditId').value || uid(),
     name, task: document.getElementById('aTask').value,
     location: document.getElementById('aLocation').value.trim(),
     urgency: document.getElementById('aUrgency').value,
-    required: parseInt(document.getElementById('aRequired').value)||2,
+    required: parseInt(document.getElementById('aRequired').value) || 2,
     coord: document.getElementById('aCoord').value.trim(),
-    skills: getSelectedSkills('areaSkillsSelector'),
-    desc: document.getElementById('aDesc').value.trim(),
-    lat, lng
+    skills, desc: document.getElementById('aDesc').value.trim()
   };
   const editId = document.getElementById('aEditId').value;
   if (editId) {
@@ -1171,23 +1110,23 @@ function saveArea() {
   }
   save(); closeModal('areaModal'); renderAreas(); updateBadges(); refreshDashboard();
 }
+
 function editArea(id) {
   const a = areas.find(x => x.id === id);
   if (!a) return;
-  document.getElementById('aName').value    = a.name;
-  document.getElementById('aTask').value    = a.task;
-  document.getElementById('aLocation').value= a.location||'';
-  document.getElementById('aUrgency').value = a.urgency||'medium';
-  document.getElementById('aRequired').value= a.required||2;
-  document.getElementById('aCoord').value   = a.coord||'';
-  document.getElementById('aDesc').value    = a.desc||'';
-  document.getElementById('aEditId').value  = a.id;
-  document.getElementById('aLat').value     = a.lat||'';
-  document.getElementById('aLng').value     = a.lng||'';
-  setSkills('areaSkillsSelector', a.skills||[]);
+  document.getElementById('aName').value = a.name;
+  document.getElementById('aTask').value = a.task;
+  document.getElementById('aLocation').value = a.location || '';
+  document.getElementById('aUrgency').value = a.urgency || 'medium';
+  document.getElementById('aRequired').value = a.required || 2;
+  document.getElementById('aCoord').value = a.coord || '';
+  document.getElementById('aDesc').value = a.desc || '';
+  document.getElementById('aEditId').value = a.id;
+  setSkills('areaSkillsSelector', a.skills || []);
   document.querySelector('#areaModal .modal-title').textContent = '// EDIT AREA';
   openModal('areaModal');
 }
+
 function deleteArea(id) {
   if (!confirm('Remove this area?')) return;
   areas = areas.filter(a => a.id !== id);
@@ -1195,6 +1134,7 @@ function deleteArea(id) {
   save(); renderAreas(); updateBadges(); refreshDashboard(); renderRoster();
   toast('Area removed.');
 }
+
 function renderAreas() {
   const grid = document.getElementById('areaGrid');
   if (!areas.length) {
@@ -1203,23 +1143,25 @@ function renderAreas() {
   }
   grid.innerHTML = areas.map(a => {
     const assigned = roster.filter(r => r.areaId === a.id).length;
-    const pct = Math.min(100, Math.round((assigned/(a.required||1))*100));
-    const fillClass = pct>=100?'fill-red':pct>=60?'fill-amber':'fill-green';
-    const urgBadge = a.urgency==='high'?'badge-urgent':a.urgency==='medium'?'badge-medium':'badge-low';
-    const urgLabel = a.urgency==='high'?'🔴 HIGH':a.urgency==='medium'?'🟡 MEDIUM':'🟢 LOW';
-    const hasCoord = a.lat && a.lng;
-    return `<div class="area-card">
+    const pct = Math.min(100, Math.round((assigned / (a.required||1)) * 100));
+    const fillClass = pct >= 100 ? 'fill-red' : pct >= 60 ? 'fill-amber' : 'fill-green';
+    const urgBadge = a.urgency === 'high' ? 'badge-urgent' : a.urgency === 'medium' ? 'badge-medium' : 'badge-low';
+    const urgLabel = a.urgency === 'high' ? '🔴 HIGH' : a.urgency === 'medium' ? '🟡 MEDIUM' : '🟢 LOW';
+    return `
+    <div class="area-card">
       <div class="area-header">
-        <div><div class="area-name">${a.name}</div><div class="area-type">${a.task}${a.location?' · '+a.location:''}</div></div>
+        <div>
+          <div class="area-name">${a.name}</div>
+          <div class="area-type">${a.task}${a.location ? ' · '+a.location : ''}</div>
+        </div>
         <span class="badge ${urgBadge}">${urgLabel}</span>
       </div>
-      <div class="area-capacity">${assigned} / ${a.required} volunteers assigned</div>
-      <div class="capacity-bar"><div class="capacity-fill ${fillClass}" style="width:${pct}%"></div></div>
-      ${(a.skills||[]).length?`<div class="vol-skills" style="margin:0.5rem 0">${a.skills.map(s=>`<span class="vol-skill-tag">${s}</span>`).join('')}</div>`:''}
-      ${a.coord?`<div style="font-size:0.72rem;color:var(--text-muted)">👤 Coord: ${a.coord}</div>`:''}
-      <div style="font-size:0.7rem;color:${hasCoord?'var(--accent)':'var(--text-dim)'};margin-top:0.4rem;font-family:var(--mono)">
-        ${hasCoord?`📍 ${a.lat.toFixed(4)}, ${a.lng.toFixed(4)}`:'📍 No map coordinates set'}
+      <div class="area-capacity">
+        ${assigned} / ${a.required} volunteers assigned
       </div>
+      <div class="capacity-bar"><div class="capacity-fill ${fillClass}" style="width:${pct}%"></div></div>
+      ${(a.skills||[]).length ? `<div class="vol-skills" style="margin:0.5rem 0">${a.skills.map(s=>`<span class="vol-skill-tag">${s}</span>`).join('')}</div>` : ''}
+      ${a.coord ? `<div style="font-size:0.72rem;color:var(--text-muted)">👤 Coord: ${a.coord}</div>` : ''}
       <div class="vol-actions" style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border)">
         <button class="btn btn-secondary btn-sm" onclick="editArea('${a.id}')">✏️ Edit</button>
         <button class="btn btn-danger btn-sm" onclick="deleteArea('${a.id}')">🗑️</button>
@@ -1229,315 +1171,124 @@ function renderAreas() {
 }
 
 // ═══════════════════════════════════════
-//  MAP INTEGRATION (Leaflet + CARTO)
-// ═══════════════════════════════════════
-function initOrRefreshMap() {
-  const mapEl = document.getElementById('mapLeaflet');
-
-  if (!leafletMap) {
-    // Use Bengaluru as default center
-    leafletMap = L.map('mapLeaflet', {
-      center: [12.9716, 77.5946],
-      zoom: 12,
-      zoomControl: true
-    });
-
-    // Use CARTO Voyager (full color, works without referer)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(leafletMap);
-
-    // Ensure map tiles render after DOM is ready
-    setTimeout(() => { leafletMap.invalidateSize(); }, 200);
-  }
-
-  refreshMap();
-}
-
-function refreshMap() {
-  if (!leafletMap) return;
-  leafletMap.invalidateSize();
-
-  // Clear existing markers
-  mapMarkers.forEach(m => m.remove());
-  mapMarkers = [];
-
-  const filteredAreas = mapFilter === 'all' ? areas : areas.filter(a => a.urgency === mapFilter);
-
-  // Place area markers
-  filteredAreas.forEach((area, idx) => {
-    if (!area.lat || !area.lng) return;
-
-    const assigned = roster.filter(r => r.areaId === area.id).length;
-    const pct = Math.min(100, Math.round((assigned / (area.required || 1)) * 100));
-
-    // Urgency colour
-    const colors = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e' };
-    const glows  = { high: 'rgba(239,68,68,0.4)', medium: 'rgba(245,158,11,0.3)', low: 'rgba(34,197,94,0.3)' };
-    const color  = colors[area.urgency] || '#22c55e';
-    const glow   = glows[area.urgency]  || 'rgba(34,197,94,0.3)';
-
-    // Pulse ring size based on volunteer count (bigger = more volunteers)
-    const ringSize = 40 + assigned * 8;
-
-    const iconHtml = `
-      <div style="position:relative;width:${ringSize}px;height:${ringSize}px;">
-        <div style="position:absolute;inset:0;border-radius:50%;background:${glow};animation:mapPulse 2s infinite;"></div>
-        <div style="position:absolute;inset:4px;border-radius:50%;background:rgba(10,15,26,0.85);border:2px solid ${color};display:flex;flex-direction:column;align-items:center;justify-content:center;">
-          <div style="font-family:'Space Mono',monospace;font-weight:700;font-size:${assigned>9?10:12}px;color:${color};line-height:1">${assigned}</div>
-          <div style="font-size:7px;color:rgba(255,255,255,0.5);letter-spacing:0.03em">VOL</div>
-        </div>
-      </div>`;
-
-    const icon = L.divIcon({
-      html: iconHtml,
-      className: '',
-      iconSize: [ringSize, ringSize],
-      iconAnchor: [ringSize/2, ringSize/2]
-    });
-
-    const volNames = roster.filter(r => r.areaId === area.id).map(r => r.volName);
-    const popupContent = `
-      <div style="min-width:200px">
-        <div style="font-family:'Space Mono',monospace;font-size:0.75rem;color:${color};margin-bottom:0.5rem;letter-spacing:0.03em">${area.urgency.toUpperCase()} PRIORITY</div>
-        <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem">${area.name}</div>
-        <div style="font-size:0.75rem;color:#8899bb;margin-bottom:0.5rem">${area.task}${area.location?' · '+area.location:''}</div>
-        <div style="background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);border-radius:8px;padding:0.5rem;margin-bottom:0.5rem">
-          <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:0.72rem">
-            <span style="color:#8899bb">VOLUNTEERS</span>
-            <span style="color:${color};font-weight:700">${assigned} / ${area.required}</span>
-          </div>
-          <div style="height:4px;background:#1f2d45;border-radius:4px;margin-top:0.35rem;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:${color};border-radius:4px"></div>
-          </div>
-        </div>
-        ${volNames.length ? `
-          <div style="font-size:0.72rem;color:#8899bb;margin-bottom:0.25rem;font-family:'Space Mono',monospace">ASSIGNED:</div>
-          ${volNames.map(n=>`<div style="font-size:0.75rem;padding:0.1rem 0;color:#e2e8f0">• ${n}</div>`).join('')}
-        ` : '<div style="font-size:0.75rem;color:#4a5a7a;font-style:italic">No volunteers assigned yet</div>'}
-        ${area.coord?`<div style="font-size:0.72rem;color:#8899bb;margin-top:0.4rem">👤 ${area.coord}</div>`:''}
-      </div>`;
-
-    const marker = L.marker([area.lat, area.lng], { icon })
-      .addTo(leafletMap)
-      .bindPopup(popupContent, { maxWidth: 260 });
-
-    mapMarkers.push(marker);
-  });
-
-  // Place volunteer markers — show ALL volunteers scattered near their nearest or assigned area
-  const areasWithCoords = areas.filter(a => a.lat && a.lng);
-  volunteers.forEach((vol, idx) => {
-    // Check if assigned to an area via roster
-    const rosterEntry = roster.find(r => r.volId === vol.id);
-    let targetArea = null;
-
-    if (rosterEntry) {
-      targetArea = areas.find(a => a.id === rosterEntry.areaId && a.lat && a.lng);
-    }
-
-    // If not assigned or assigned area has no coords, find nearest area with coords
-    if (!targetArea && areasWithCoords.length > 0) {
-      targetArea = areasWithCoords[idx % areasWithCoords.length];
-    }
-
-    if (!targetArea) return;
-
-    // Small scatter offset so volunteers don't overlap area marker
-    const angle = idx * 137.5 * (Math.PI / 180); // golden angle scatter
-    const radius = 0.003 + (idx % 4) * 0.0015;
-    const vLat = targetArea.lat + Math.cos(angle) * radius;
-    const vLng = targetArea.lng + Math.sin(angle) * radius;
-
-    const initials = vol.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const isAssigned = !!rosterEntry;
-    const borderColor = isAssigned ? 'rgba(0,212,170,0.8)' : 'rgba(255,255,255,0.4)';
-    const bgGradient = isAssigned ? 'linear-gradient(135deg,#00d4aa,#3b82f6)' : 'linear-gradient(135deg,#3b82f6,#1a2235)';
-    const volIcon = L.divIcon({
-      html: `<div style="width:26px;height:26px;border-radius:50%;background:${bgGradient};border:2px solid ${borderColor};display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8px;font-weight:700;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.5)">${initials}</div>`,
-      className: '',
-      iconSize: [26, 26],
-      iconAnchor: [13, 13]
-    });
-
-    const assignedAreaName = rosterEntry ? (areas.find(a=>a.id===rosterEntry.areaId)||{name:'Unknown'}).name : 'Unassigned – Active';
-    const volPopup = `
-      <div>
-        <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.2rem">${vol.name}</div>
-        <div style="font-family:'Space Mono',monospace;font-size:0.68rem;color:#8899bb;margin-bottom:0.4rem">${vol.vid}</div>
-        <div style="font-size:0.75rem;color:#8899bb">📍 ${isAssigned ? 'Assigned to' : 'Active near'}: <strong style="color:#e2e8f0">${assignedAreaName}</strong></div>
-        <div style="font-size:0.75rem;color:#8899bb;margin-top:0.2rem">🕐 Shift: <strong style="color:#e2e8f0">${vol.shift}</strong></div>
-        <div style="font-size:0.75rem;color:#8899bb;margin-top:0.2rem">⭐ Exp: <strong style="color:#e2e8f0">${vol.exp} yr${vol.exp!==1?'s':''}</strong></div>
-        <div style="margin-top:0.3rem"><span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:0.65rem;font-family:'Space Mono',monospace;background:${isAssigned?'rgba(0,212,170,0.15)':'rgba(59,130,246,0.15)'};border:1px solid ${isAssigned?'rgba(0,212,170,0.4)':'rgba(59,130,246,0.4)'};color:${isAssigned?'#00d4aa':'#3b82f6'}">${isAssigned?'✅ DEPLOYED':'🟡 AVAILABLE'}</span></div>
-        ${vol.skills&&vol.skills.length?`<div style="margin-top:0.4rem;display:flex;flex-wrap:wrap;gap:3px">${vol.skills.slice(0,3).map(s=>`<span style="background:#1f2d45;border:1px solid #2a3a55;border-radius:10px;padding:1px 6px;font-size:0.65rem;color:#8899bb">${s}</span>`).join('')}</div>`:''}
-      </div>`;
-
-    const vMarker = L.marker([vLat, vLng], { icon: volIcon })
-      .addTo(leafletMap)
-      .bindPopup(volPopup, { maxWidth: 220 });
-
-    mapMarkers.push(vMarker);
-  });
-
-  // Update sidebar list
-  renderMapAreaList(filteredAreas);
-  renderMapStatsMini();
-
-  // If areas have coordinates, fit bounds
-  const withCoords = filteredAreas.filter(a => a.lat && a.lng);
-  if (withCoords.length >= 2) {
-    const bounds = L.latLngBounds(withCoords.map(a => [a.lat, a.lng]));
-    leafletMap.fitBounds(bounds.pad(0.15));
-  } else if (withCoords.length === 1) {
-    leafletMap.setView([withCoords[0].lat, withCoords[0].lng], 14);
-  }
-}
-
-function renderMapStatsMini() {
-  const total = areas.length;
-  const totalVol = volunteers.length;
-  const deployedVol = new Set(roster.map(r => r.volId)).size;
-  const highCount = areas.filter(a => a.urgency === 'high').length;
-  document.getElementById('mapStatsMini').innerHTML = `
-    <div class="map-stat-mini"><div class="map-stat-mini-val" style="color:var(--accent)">${total}</div><div class="map-stat-mini-lbl">Areas</div></div>
-    <div class="map-stat-mini"><div class="map-stat-mini-val" style="color:var(--accent2)">${totalVol}</div><div class="map-stat-mini-lbl">Volunteers</div></div>
-    <div class="map-stat-mini"><div class="map-stat-mini-val" style="color:var(--danger)">${highCount}</div><div class="map-stat-mini-lbl">Urgent</div></div>`;
-}
-
-function renderMapAreaList(filteredAreas) {
-  const el = document.getElementById('mapAreaList');
-  if (!filteredAreas.length) {
-    el.innerHTML = `<div style="font-size:0.75rem;color:var(--text-dim);text-align:center;padding:1rem">No areas with map data.<br>Add lat/lng when creating areas.</div>`;
-    return;
-  }
-  const sorted = [...filteredAreas].sort((a,b)=>{
-    const u={high:3,medium:2,low:1};
-    return (u[b.urgency]||1)-(u[a.urgency]||1);
-  });
-  el.innerHTML = sorted.map(a => {
-    const assigned = roster.filter(r => r.areaId === a.id).length;
-    const colors = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e' };
-    const color = colors[a.urgency]||'#22c55e';
-    const hasCoord = a.lat && a.lng;
-    return `<div class="map-area-item" onclick="${hasCoord?`flyToArea(${a.lat},${a.lng})`:''}">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.25rem">
-        <div class="map-area-name" style="font-size:0.76rem">${a.name}</div>
-        <div style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;${a.urgency==='high'?'box-shadow:0 0 6px '+color:''}" title="${a.urgency}"></div>
-      </div>
-      <div class="map-area-stats">
-        <span class="map-vol-count" style="color:${color}">${assigned}<span style="color:var(--text-dim)">/${a.required}</span></span>
-        <span style="font-size:0.65rem;color:var(--text-dim);font-family:var(--mono)">volunteers</span>
-        ${!hasCoord?'<span style="font-size:0.6rem;color:var(--text-dim);margin-left:auto">No GPS</span>':''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function flyToArea(lat, lng) {
-  if (leafletMap) leafletMap.flyTo([lat, lng], 15, { duration: 1.2 });
-}
-
-function setMapFilter(filter, el) {
-  mapFilter = filter;
-  document.querySelectorAll('.map-filter-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  refreshMap();
-}
-
-// Inject CSS animation for map pulse
-const style = document.createElement('style');
-style.textContent = `@keyframes mapPulse { 0%,100%{transform:scale(1);opacity:0.7} 50%{transform:scale(1.4);opacity:0} }`;
-document.head.appendChild(style);
-
-// ═══════════════════════════════════════
 //  ALLOCATION ENGINE
 // ═══════════════════════════════════════
 function skillMatch(volSkills, areaSkills) {
-  if (!areaSkills || !areaSkills.length) return 1;
-  const v = volSkills||[];
-  const matches = areaSkills.filter(s=>v.includes(s)).length;
-  return matches/areaSkills.length;
+  if (!areaSkills || areaSkills.length === 0) return 1;
+  const v = volSkills || [];
+  const matches = areaSkills.filter(s => v.includes(s)).length;
+  return matches / areaSkills.length;
 }
+
 function runAllocation() {
-  if (!volunteers.length) { toast('No volunteers added.','error'); return; }
-  if (!areas.length)      { toast('No task areas defined.','error'); return; }
+  if (!volunteers.length) { toast('No volunteers added.', 'error'); return; }
+  if (!areas.length) { toast('No task areas defined.', 'error'); return; }
+
   const date = document.getElementById('allocDate').value || new Date().toISOString().split('T')[0];
   const shift = document.getElementById('allocShift').value;
   const strategy = document.getElementById('allocStrategy').value;
-  const maxPerArea = parseInt(document.getElementById('allocMax').value)||3;
+  const maxPerArea = parseInt(document.getElementById('allocMax').value) || 3;
+
+  // Filter volunteers by shift preference (if not "All")
   let pool = [...volunteers];
-  if (shift !== 'All') pool = pool.filter(v => v.shift===shift||v.shift==='Any');
-  if (!pool.length) { toast('No volunteers available for this shift.','error'); return; }
-  const urgencyScore = {high:3,medium:2,low:1};
-  const sortedAreas = [...areas].sort((a,b)=>(urgencyScore[b.urgency||'low']||1)-(urgencyScore[a.urgency||'low']||1));
+  if (shift !== 'All') {
+    pool = pool.filter(v => v.shift === shift || v.shift === 'Any');
+  }
+  if (!pool.length) { toast('No volunteers available for this shift.', 'error'); return; }
+
+  // Sort areas by urgency
+  const urgencyScore = { high: 3, medium: 2, low: 1 };
+  const sortedAreas = [...areas].sort((a,b) => urgencyScore[b.urgency||'low'] - urgencyScore[a.urgency||'low']);
+
+  // Track workload
   const workload = {};
-  pool.forEach(v => workload[v.id]=0);
+  pool.forEach(v => workload[v.id] = 0);
+
   const result = [];
-  const alreadyAssigned = new Set();
+  const alreadyAssigned = new Set(); // per-shift uniqueness
+
   for (const area of sortedAreas) {
-    const need = Math.min(area.required||2, maxPerArea);
-    let candidates = pool.filter(v=>!alreadyAssigned.has(v.id)).map(v=>{
-      let score=0;
+    const need = Math.min(area.required || 2, maxPerArea);
+    let candidates = pool.filter(v => !alreadyAssigned.has(v.id));
+
+    // Score each candidate
+    candidates = candidates.map(v => {
+      let score = 0;
       const sm = skillMatch(v.skills, area.skills);
-      if (strategy==='skillmatch') score=sm*100+(v.exp||0)*2;
-      else if (strategy==='urgency') score=(urgencyScore[area.urgency||'low']||1)*30+sm*50;
-      else score=sm*60+(1/(workload[v.id]+1))*40;
-      return {...v,_score:score,_sm:sm};
-    }).sort((a,b)=>b._score-a._score);
-    let assigned=0;
+      if (strategy === 'skillmatch') score = sm * 100 + (v.exp || 0) * 2;
+      else if (strategy === 'urgency') score = urgencyScore[area.urgency||'low'] * 30 + sm * 50;
+      else score = sm * 60 + (1 / (workload[v.id] + 1)) * 40; // balanced
+      return { ...v, _score: score, _sm: sm };
+    }).sort((a,b) => b._score - a._score);
+
+    let assigned = 0;
     for (const v of candidates) {
-      if (assigned>=need) break;
-      const shifts = shift==='All'?['Morning','Evening','Night']:[shift];
+      if (assigned >= need) break;
+      const shifts = shift === 'All' ? ['Morning','Evening','Night'] : [shift];
       for (const sh of shifts) {
         result.push({
-          id:uid(),volId:v.id,areaId:area.id,volName:v.name,volVid:v.vid,volSkills:v.skills,
-          areaName:area.name,task:area.task,shift:sh,date,urgency:area.urgency,
-          matchScore:Math.round(v._sm*100),status:'Scheduled'
+          id: uid(), volId: v.id, areaId: area.id,
+          volName: v.name, volVid: v.vid, volSkills: v.skills,
+          areaName: area.name, task: area.task,
+          shift: sh, date, urgency: area.urgency,
+          matchScore: Math.round(v._sm * 100), status: 'Scheduled'
         });
-        workload[v.id]=(workload[v.id]||0)+1;
+        workload[v.id] = (workload[v.id] || 0) + 1;
         alreadyAssigned.add(v.id);
-        assigned++; break;
+        assigned++;
+        break;
       }
     }
   }
+
   pendingAllocation = result;
+
+  // Show preview
   const tbody = document.getElementById('allocPreviewBody');
-  tbody.innerHTML = result.map((r,i)=>{
-    const urgBadge = r.urgency==='high'?'badge-urgent':r.urgency==='medium'?'badge-medium':'badge-low';
-    const urgLabel = r.urgency==='high'?'🔴 HIGH':r.urgency==='medium'?'🟡 MEDIUM':'🟢 LOW';
-    const sc = r.matchScore>=80?'var(--success)':r.matchScore>=50?'var(--accent3)':'var(--danger)';
-    return `<tr><td>${i+1}</td>
+  tbody.innerHTML = result.map((r, i) => {
+    const urgBadge = r.urgency === 'high' ? 'badge-urgent' : r.urgency === 'medium' ? 'badge-medium' : 'badge-low';
+    const urgLabel = r.urgency === 'high' ? '🔴 HIGH' : r.urgency === 'medium' ? '🟡 MEDIUM' : '🟢 LOW';
+    const scoreColor = r.matchScore >= 80 ? 'var(--success)' : r.matchScore >= 50 ? 'var(--accent3)' : 'var(--danger)';
+    return `<tr>
+      <td>${i+1}</td>
       <td><strong>${r.volName}</strong><br><span style="color:var(--text-muted);font-size:0.7rem;font-family:var(--mono)">${r.volVid}</span></td>
-      <td>${r.areaName}</td><td>${r.task}</td>
+      <td>${r.areaName}</td>
+      <td>${r.task}</td>
       <td><span class="badge badge-info">${r.shift}</span></td>
-      <td style="color:${sc};font-family:var(--mono);font-weight:700">${r.matchScore}%</td>
-      <td><span class="badge ${urgBadge}">${urgLabel}</span></td></tr>`;
-  }).join('')||`<tr><td colspan="7"><div class="empty-state">No matches found.</div></td></tr>`;
-  document.getElementById('allocPreview').style.display='block';
-  const highUrgencyCount = areas.filter(a=>a.urgency==='high').length;
-  const avgScore = result.length?Math.round(result.reduce((s,r)=>s+r.matchScore,0)/result.length):0;
+      <td style="color:${scoreColor};font-family:var(--mono);font-weight:700">${r.matchScore}%</td>
+      <td><span class="badge ${urgBadge}">${urgLabel}</span></td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="7"><div class="empty-state">No matches found for selected criteria.</div></td></tr>`;
+
+  document.getElementById('allocPreview').style.display = 'block';
+
+  // AI insight
+  const highUrgencyCount = areas.filter(a => a.urgency === 'high').length;
+  const avgScore = result.length ? Math.round(result.reduce((s,r)=>s+r.matchScore,0)/result.length) : 0;
   document.getElementById('allocInsight').querySelector('.ai-text').innerHTML =
-    `<strong>AI ANALYSIS:</strong> Generated <strong>${result.length}</strong> allocations across <strong>${new Set(result.map(r=>r.areaId)).size}</strong> areas. Avg skill match: <strong style="color:var(--accent)">${avgScore}%</strong>. ${highUrgencyCount>0?`<strong style="color:var(--danger)">${highUrgencyCount} high-priority area(s)</strong> staffed first.`:''} Strategy: <strong>${strategy}</strong>.`;
-  toast(`Generated ${result.length} allocations.`,'success');
+    `<strong>AI ANALYSIS:</strong> Generated <strong>${result.length}</strong> allocations across <strong>${new Set(result.map(r=>r.areaId)).size}</strong> areas. Average skill match score: <strong style="color:var(--accent)">${avgScore}%</strong>. ${highUrgencyCount > 0 ? `<strong style="color:var(--danger)">${highUrgencyCount} high-priority area(s)</strong> are staffed first.` : 'All areas are routine priority.'} Strategy: <strong>${strategy}</strong>.`;
+
+  toast(`Generated ${result.length} allocations.`, 'success');
 }
+
 function confirmAllocation() {
   if (!pendingAllocation.length) return;
-  const dates  = new Set(pendingAllocation.map(r=>r.date));
-  const shifts = new Set(pendingAllocation.map(r=>r.shift));
-  roster = roster.filter(r=>!(dates.has(r.date)&&shifts.has(r.shift)));
+  // Remove old entries for same date/shift to avoid dupes
+  const dates = new Set(pendingAllocation.map(r => r.date));
+  const shifts = new Set(pendingAllocation.map(r => r.shift));
+  roster = roster.filter(r => !(dates.has(r.date) && shifts.has(r.shift)));
   roster.push(...pendingAllocation);
-  pendingAllocation=[];
-  document.getElementById('allocPreview').style.display='none';
+  pendingAllocation = [];
+  document.getElementById('allocPreview').style.display = 'none';
   save(); renderRoster(); refreshDashboard();
-  toast('Allocation saved to roster!','success');
+  toast('Allocation saved to roster!', 'success');
   switchPanel('roster', document.querySelector('[onclick*=roster]'));
 }
+
 function clearRoster() {
   if (!confirm('Clear the entire roster?')) return;
-  roster=[]; pendingAllocation=[];
-  document.getElementById('allocPreview').style.display='none';
+  roster = []; pendingAllocation = [];
+  document.getElementById('allocPreview').style.display = 'none';
   save(); renderRoster(); refreshDashboard();
   toast('Roster cleared.');
 }
@@ -1545,40 +1296,49 @@ function clearRoster() {
 // ═══════════════════════════════════════
 //  ROSTER
 // ═══════════════════════════════════════
-let rosterShiftFilter='all', rosterSearchFilter='';
-function filterShift(shift,el) {
-  rosterShiftFilter=shift;
-  document.querySelectorAll('.shift-btn').forEach(b=>b.classList.remove('active'));
+let rosterShiftFilter = 'all';
+let rosterSearchFilter = '';
+
+function filterShift(shift, el) {
+  rosterShiftFilter = shift;
+  document.querySelectorAll('.shift-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderRoster();
 }
-function filterRoster(q) { rosterSearchFilter=q.toLowerCase(); renderRoster(); }
+function filterRoster(q) { rosterSearchFilter = q.toLowerCase(); renderRoster(); }
+
 function renderRoster() {
-  const tbody=document.getElementById('rosterBody');
-  let rows=[...roster];
-  if (rosterShiftFilter!=='all') rows=rows.filter(r=>r.shift===rosterShiftFilter);
-  if (rosterSearchFilter) rows=rows.filter(r=>
-    r.volName.toLowerCase().includes(rosterSearchFilter)||
-    r.areaName.toLowerCase().includes(rosterSearchFilter)||
+  const tbody = document.getElementById('rosterBody');
+  let rows = [...roster];
+  if (rosterShiftFilter !== 'all') rows = rows.filter(r => r.shift === rosterShiftFilter);
+  if (rosterSearchFilter) rows = rows.filter(r =>
+    r.volName.toLowerCase().includes(rosterSearchFilter) ||
+    r.areaName.toLowerCase().includes(rosterSearchFilter) ||
     r.task.toLowerCase().includes(rosterSearchFilter)
   );
-  rows.sort((a,b)=>{const u={high:3,medium:2,low:1};return(u[b.urgency]||1)-(u[a.urgency]||1);});
+  rows.sort((a,b) => {
+    const u = {high:3,medium:2,low:1};
+    return (u[b.urgency]||1) - (u[a.urgency]||1);
+  });
   if (!rows.length) {
-    tbody.innerHTML=`<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">📋</div>No roster entries${rosterShiftFilter!=='all'||rosterSearchFilter?' match your filter':'. Go to Auto-Allocate to generate.'}.</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">📋</div>No roster entries${rosterShiftFilter !== 'all' || rosterSearchFilter ? ' match your filter' : '. Go to Auto-Allocate to generate.'}.</div></td></tr>`;
     return;
   }
-  tbody.innerHTML=rows.map((r,i)=>{
-    const urgBadge=r.urgency==='high'?'badge-urgent':r.urgency==='medium'?'badge-medium':'badge-low';
-    const urgLabel=r.urgency==='high'?'🔴 HIGH':r.urgency==='medium'?'🟡 MEDIUM':'🟢 LOW';
-    return `<tr><td>${i+1}</td>
+  tbody.innerHTML = rows.map((r, i) => {
+    const urgBadge = r.urgency === 'high' ? 'badge-urgent' : r.urgency === 'medium' ? 'badge-medium' : 'badge-low';
+    const urgLabel = r.urgency === 'high' ? '🔴 HIGH' : r.urgency === 'medium' ? '🟡 MEDIUM' : '🟢 LOW';
+    return `<tr>
+      <td>${i+1}</td>
       <td><strong>${r.volName}</strong></td>
       <td><span style="font-family:var(--mono);font-size:0.72rem;color:var(--text-muted)">${r.volVid}</span></td>
-      <td>${r.areaName}</td><td>${r.task}</td>
+      <td>${r.areaName}</td>
+      <td>${r.task}</td>
       <td><span class="badge badge-info">${r.shift}</span></td>
-      <td><span style="font-family:var(--mono);font-size:0.75rem">${r.date||'—'}</span></td>
+      <td><span style="font-family:var(--mono);font-size:0.75rem">${r.date || '—'}</span></td>
       <td><div style="display:flex;flex-wrap:wrap;gap:3px">${(r.volSkills||[]).slice(0,2).map(s=>`<span class="vol-skill-tag">${s}</span>`).join('')}${(r.volSkills||[]).length>2?`<span class="vol-skill-tag">+${(r.volSkills||[]).length-2}</span>`:''}</div></td>
       <td><span class="badge ${urgBadge}">${urgLabel}</span></td>
-      <td><span class="badge badge-teal">✅ Active</span></td></tr>`;
+      <td><span class="badge badge-teal">✅ Active</span></td>
+    </tr>`;
   }).join('');
 }
 
@@ -1586,77 +1346,114 @@ function renderRoster() {
 //  DASHBOARD
 // ═══════════════════════════════════════
 function refreshDashboard() {
-  const totalVols=volunteers.length, totalAreas=areas.length, totalRoster=roster.length;
-  const highUrgency=areas.filter(a=>a.urgency==='high').length;
-  const uniqueAssigned=new Set(roster.map(r=>r.volId)).size;
-  document.getElementById('dashStats').innerHTML=`
+  const totalVols = volunteers.length;
+  const totalAreas = areas.length;
+  const totalRoster = roster.length;
+  const highUrgency = areas.filter(a => a.urgency === 'high').length;
+  const uniqueAssigned = new Set(roster.map(r => r.volId)).size;
+
+  document.getElementById('dashStats').innerHTML = `
     <div class="stat-card teal"><div class="stat-label">Total Volunteers</div><div class="stat-value teal">${totalVols}</div><div class="stat-meta">Registered in system</div></div>
     <div class="stat-card blue"><div class="stat-label">Task Areas</div><div class="stat-value blue">${totalAreas}</div><div class="stat-meta">Active locations</div></div>
     <div class="stat-card green"><div class="stat-label">Roster Entries</div><div class="stat-value green">${totalRoster}</div><div class="stat-meta">Scheduled allocations</div></div>
     <div class="stat-card red"><div class="stat-label">High Priority</div><div class="stat-value red">${highUrgency}</div><div class="stat-meta">Urgent areas</div></div>
-    <div class="stat-card amber"><div class="stat-label">Deployed</div><div class="stat-value amber">${uniqueAssigned}</div><div class="stat-meta">Volunteers assigned</div></div>`;
-  let insight='';
-  if (!totalVols) insight='Start by adding volunteers using the <strong>Volunteers</strong> panel.';
-  else if (!totalAreas) insight='Volunteers registered! Now add <strong>Task Areas</strong> to define operational locations.';
-  else if (!totalRoster) insight=`<strong>${totalVols}</strong> volunteers and <strong>${totalAreas}</strong> areas configured. Go to <strong>Auto-Allocate</strong> to generate the roster.`;
+    <div class="stat-card amber"><div class="stat-label">Deployed</div><div class="stat-value amber">${uniqueAssigned}</div><div class="stat-meta">Volunteers assigned</div></div>
+  `;
+
+  // AI insight
+  let insight = '';
+  if (!totalVols) insight = 'Start by adding volunteers using the <strong>Volunteers</strong> panel.';
+  else if (!totalAreas) insight = 'Volunteers registered! Now add <strong>Task Areas</strong> to define operational locations.';
+  else if (!totalRoster) insight = `<strong>${totalVols}</strong> volunteers and <strong>${totalAreas}</strong> areas are configured. Go to <strong>Auto-Allocate</strong> to generate the roster.`;
   else {
-    const coverage=Math.round((uniqueAssigned/totalVols)*100);
-    const highCovered=roster.filter(r=>{const a=areas.find(x=>x.id===r.areaId);return a&&a.urgency==='high';}).length;
-    insight=`<strong>${coverage}%</strong> of volunteers are deployed. ${highUrgency>0?`<strong style="color:var(--danger)">${highCovered}</strong> allocations cover high-urgency areas.`:'No high-urgency areas detected.'} Roster has <strong>${totalRoster}</strong> scheduled entries.`;
+    const coverage = Math.round((uniqueAssigned / totalVols) * 100);
+    const highCovered = roster.filter(r => { const a = areas.find(x=>x.id===r.areaId); return a && a.urgency==='high'; }).length;
+    insight = `<strong>${coverage}%</strong> of volunteers are deployed. ${highUrgency > 0 ? `<strong style="color:var(--danger)">${highCovered}</strong> allocations cover high-urgency areas.` : 'No high-urgency areas detected.'} Roster has <strong>${totalRoster}</strong> scheduled entries.`;
   }
-  document.getElementById('aiInsightText').innerHTML=`<strong>AI INSIGHT:</strong> ${insight}`;
-  const recentEl=document.getElementById('recentAllocations');
-  const recent=[...roster].reverse().slice(0,6);
-  if (!recent.length) { recentEl.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div>No allocations yet.</div>`; }
-  else recentEl.innerHTML=recent.map(r=>{
-    const urgClass=r.urgency==='high'?'badge-urgent':r.urgency==='medium'?'badge-medium':'badge-low';
-    return `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--border)">
-      <div class="urgency-dot ${r.urgency==='high'?'dot-urgent':r.urgency==='medium'?'dot-medium':'dot-low'}"></div>
-      <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:0.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.volName}</div>
-      <div style="font-size:0.7rem;color:var(--text-muted)">${r.areaName} · ${r.shift}</div></div>
-      <span class="badge ${urgClass}" style="flex-shrink:0">${r.urgency?.toUpperCase()}</span></div>`;
-  }).join('');
-  const areaEl=document.getElementById('areaStatus');
-  if (!areas.length) { areaEl.innerHTML=`<div class="empty-state"><div class="empty-icon">📍</div>No task areas defined.</div>`; }
-  else areaEl.innerHTML=areas.slice(0,6).map(a=>{
-    const assigned=roster.filter(r=>r.areaId===a.id).length;
-    const pct=Math.min(100,Math.round((assigned/(a.required||1))*100));
-    const fillClass=pct>=100?'fill-red':pct>=60?'fill-amber':'fill-green';
-    return `<div style="margin-bottom:0.75rem">
-      <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:0.3rem">
-        <span>${a.name}</span>
-        <span style="color:var(--text-muted);font-family:var(--mono)">${assigned}/${a.required}</span>
-      </div>
-      <div class="capacity-bar"><div class="capacity-fill ${fillClass}" style="width:${pct}%"></div></div></div>`;
-  }).join('');
+  document.getElementById('aiInsightText').innerHTML = `<strong>AI INSIGHT:</strong> ${insight}`;
+
+  // Recent allocations
+  const recentEl = document.getElementById('recentAllocations');
+  const recent = [...roster].reverse().slice(0, 6);
+  if (!recent.length) {
+    recentEl.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div>No allocations yet.</div>`;
+  } else {
+    recentEl.innerHTML = recent.map(r => {
+      const urgClass = r.urgency === 'high' ? 'badge-urgent' : r.urgency === 'medium' ? 'badge-medium' : 'badge-low';
+      return `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid var(--border)">
+        <div class="urgency-dot ${r.urgency==='high'?'dot-urgent':r.urgency==='medium'?'dot-medium':'dot-low'}"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:0.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.volName}</div>
+          <div style="font-size:0.7rem;color:var(--text-muted)">${r.areaName} · ${r.shift}</div>
+        </div>
+        <span class="badge ${urgClass}" style="flex-shrink:0">${r.urgency?.toUpperCase()}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Area status
+  const areaEl = document.getElementById('areaStatus');
+  if (!areas.length) {
+    areaEl.innerHTML = `<div class="empty-state"><div class="empty-icon">📍</div>No task areas defined.</div>`;
+  } else {
+    areaEl.innerHTML = areas.slice(0,6).map(a => {
+      const assigned = roster.filter(r => r.areaId === a.id).length;
+      const pct = Math.min(100, Math.round((assigned / (a.required||1)) * 100));
+      const fillClass = pct >= 100 ? 'fill-red' : pct >= 60 ? 'fill-amber' : 'fill-green';
+      return `<div style="margin-bottom:0.75rem">
+        <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:0.3rem">
+          <span>${a.name}</span>
+          <span style="color:var(--text-muted);font-family:var(--mono)">${assigned}/${a.required}</span>
+        </div>
+        <div class="capacity-bar"><div class="capacity-fill ${fillClass}" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
 }
 
 // ═══════════════════════════════════════
 //  ANALYTICS
 // ═══════════════════════════════════════
 function renderAnalytics() {
-  const totalVols=volunteers.length,totalAreas=areas.length,totalRoster=roster.length;
-  const deployed=new Set(roster.map(r=>r.volId)).size;
-  document.getElementById('analyticsStats').innerHTML=`
+  const totalVols = volunteers.length;
+  const totalAreas = areas.length;
+  const totalRoster = roster.length;
+  const deployed = new Set(roster.map(r=>r.volId)).size;
+
+  document.getElementById('analyticsStats').innerHTML = `
     <div class="stat-card teal"><div class="stat-label">Volunteers</div><div class="stat-value teal">${totalVols}</div></div>
     <div class="stat-card blue"><div class="stat-label">Areas</div><div class="stat-value blue">${totalAreas}</div></div>
     <div class="stat-card green"><div class="stat-label">Allocations</div><div class="stat-value green">${totalRoster}</div></div>
-    <div class="stat-card amber"><div class="stat-label">Deployed</div><div class="stat-value amber">${deployed}</div></div>`;
-  const byArea={};roster.forEach(r=>{byArea[r.areaName]=(byArea[r.areaName]||0)+1;});
-  renderBarChart('chartByArea',byArea,'#3b82f6');
-  const bySkill={};volunteers.forEach(v=>(v.skills||[]).forEach(s=>{bySkill[s]=(bySkill[s]||0)+1;}));
-  renderBarChart('chartBySkill',bySkill,'#00d4aa');
-  const byShift={};roster.forEach(r=>{byShift[r.shift]=(byShift[r.shift]||0)+1;});
-  renderBarChart('chartByShift',byShift,'#f59e0b');
-  const byUrgency={};areas.forEach(a=>{byUrgency[a.urgency]=(byUrgency[a.urgency]||0)+1;});
-  renderBarChart('chartByUrgency',{'🔴 High':byUrgency.high||0,'🟡 Medium':byUrgency.medium||0,'🟢 Low':byUrgency.low||0},'#ef4444');
+    <div class="stat-card amber"><div class="stat-label">Deployed</div><div class="stat-value amber">${deployed}</div></div>
+  `;
+
+  // By area
+  const byArea = {};
+  roster.forEach(r => { byArea[r.areaName] = (byArea[r.areaName]||0)+1; });
+  renderBarChart('chartByArea', byArea, '#3b82f6');
+
+  // By skill
+  const bySkill = {};
+  volunteers.forEach(v => (v.skills||[]).forEach(s => { bySkill[s] = (bySkill[s]||0)+1; }));
+  renderBarChart('chartBySkill', bySkill, '#00d4aa');
+
+  // By shift
+  const byShift = {};
+  roster.forEach(r => { byShift[r.shift] = (byShift[r.shift]||0)+1; });
+  renderBarChart('chartByShift', byShift, '#f59e0b');
+
+  // By urgency
+  const byUrgency = {};
+  areas.forEach(a => { byUrgency[a.urgency] = (byUrgency[a.urgency]||0)+1; });
+  renderBarChart('chartByUrgency', {'🔴 High': byUrgency.high||0, '🟡 Medium': byUrgency.medium||0, '🟢 Low': byUrgency.low||0}, '#ef4444');
 }
-function renderBarChart(id,data,color) {
-  const el=document.getElementById(id);
-  const entries=Object.entries(data).filter(([,v])=>v>0);
-  if (!entries.length){el.innerHTML=`<div class="empty-state">No data available.</div>`;return;}
-  const max=Math.max(...entries.map(([,v])=>v));
-  el.innerHTML=entries.sort((a,b)=>b[1]-a[1]).map(([label,val])=>`
+
+function renderBarChart(id, data, color) {
+  const el = document.getElementById(id);
+  const entries = Object.entries(data).filter(([,v])=>v>0);
+  if (!entries.length) { el.innerHTML = `<div class="empty-state">No data available.</div>`; return; }
+  const max = Math.max(...entries.map(([,v])=>v));
+  el.innerHTML = entries.sort((a,b)=>b[1]-a[1]).map(([label, val]) => `
     <div class="bar-row">
       <div class="bar-label" title="${label}">${label}</div>
       <div class="bar-track"><div class="bar-fill" style="width:${Math.round((val/max)*100)}%;background:${color}"></div></div>
@@ -1665,351 +1462,74 @@ function renderBarChart(id,data,color) {
 }
 
 // ═══════════════════════════════════════
-//  EXPORT / PRINT / RESET
+//  EXPORT / PRINT
 // ═══════════════════════════════════════
 function exportRoster() {
-  if (!roster.length){toast('No roster to export.','error');return;}
-  const headers=['#','Volunteer','ID','Area','Task','Shift','Date','Skills','Priority','Status'];
-  const rows=roster.map((r,i)=>[i+1,r.volName,r.volVid,r.areaName,r.task,r.shift,r.date||'',(r.volSkills||[]).join('; '),r.urgency,r.status||'Scheduled']);
-  const csv=[headers,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob([csv],{type:'text/csv'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`volunteer-roster-${new Date().toISOString().split('T')[0]}.csv`;
-  a.click();URL.revokeObjectURL(url);
-  toast('Roster exported as CSV!','success');
+  if (!roster.length) { toast('No roster to export.', 'error'); return; }
+  const headers = ['#','Volunteer','ID','Area','Task','Shift','Date','Skills','Priority','Status'];
+  const rows = roster.map((r,i) => [
+    i+1, r.volName, r.volVid, r.areaName, r.task, r.shift, r.date||'',
+    (r.volSkills||[]).join('; '), r.urgency, r.status||'Scheduled'
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `volunteer-roster-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('Roster exported as CSV!', 'success');
 }
+
 function printRoster() {
-  switchPanel('roster',document.querySelector('[onclick*=roster]'));
-  setTimeout(()=>window.print(),300);
+  switchPanel('roster', document.querySelector('[onclick*=roster]'));
+  setTimeout(() => window.print(), 300);
 }
+
 function resetAll() {
-  if (!confirm('Reset ALL data? This will clear volunteers, areas, roster, intelligence, emergencies, and alerts.')) return;
-  volunteers=[];areas=[];roster=[];pendingAllocation=[];intelReports=[];emergencies=[];alertsData=[];
-  // Clear existing map markers
-  if (leafletMap) { mapMarkers.forEach(m=>m.remove()); mapMarkers=[]; }
-  save();updateBadges();renderVolunteers();renderAreas();renderRoster();refreshDashboard();
+  if (!confirm('Reset ALL data? This will clear volunteers, areas, and the roster.')) return;
+  volunteers = []; areas = []; roster = []; pendingAllocation = [];
+  save(); updateBadges(); renderVolunteers(); renderAreas(); renderRoster(); refreshDashboard();
   toast('All data reset.');
 }
+
+// ═══════════════════════════════════════
+//  BADGES & UTILS
+// ═══════════════════════════════════════
 function updateBadges() {
-  document.getElementById('badge-volunteers').textContent=volunteers.length;
-  document.getElementById('badge-areas').textContent=areas.length;
-  const activeEmerg=emergencies.filter(e=>e.status==='active').length;
-  document.getElementById('badge-emergency').textContent=activeEmerg;
-  document.getElementById('badge-emergency').style.display=activeEmerg?'':'none';
-  document.getElementById('badge-alerts').textContent=alertsData.length;
-  document.getElementById('badge-alerts').style.display=alertsData.length?'':'none';
+  document.getElementById('badge-volunteers').textContent = volunteers.length;
+  document.getElementById('badge-areas').textContent = areas.length;
 }
-function toast(msg,type='info') {
-  const icon=type==='success'?'✅':type==='error'?'❌':'ℹ️';
-  const el=document.createElement('div');
-  el.className=`toast ${type}`;
-  el.innerHTML=`<span>${icon}</span><span>${msg}</span>`;
+
+function toast(msg, type = 'info') {
+  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
   document.getElementById('toastContainer').appendChild(el);
-  setTimeout(()=>el.remove(),3500);
-}
-
-// ═══════════════════════════════════════
-//  INTELLIGENCE
-// ═══════════════════════════════════════
-let intelFilter='all';
-function filterIntel(filter,el) {
-  intelFilter=filter;
-  document.querySelectorAll('#panel-intelligence .shift-btn').forEach(b=>b.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderIntelligence();
-}
-function saveIntelReport() {
-  const title=document.getElementById('intelTitle').value.trim();
-  const details=document.getElementById('intelDetails').value.trim();
-  if (!title||!details) { toast('Title and details are required.','error'); return; }
-  const obj={
-    id:uid(), title, details,
-    type: document.getElementById('intelType').value,
-    location: document.getElementById('intelLocation').value.trim(),
-    severity: document.getElementById('intelSeverity').value,
-    reporter: document.getElementById('intelReporter').value.trim(),
-    createdAt: new Date().toISOString(), status:'open'
-  };
-  intelReports.unshift(obj);
-  save(); closeModal('intelModal');
-  ['intelTitle','intelDetails','intelLocation','intelReporter'].forEach(id=>document.getElementById(id).value='');
-  renderIntelligence(); toast('Intelligence report logged.','success');
-}
-function renderIntelligence() {
-  const sev={critical:'🔴 Critical',high:'🟠 High',medium:'🟡 Medium',low:'🟢 Low'};
-  const sevColor={critical:'var(--danger)',high:'#f97316',medium:'var(--accent3)',low:'var(--success)'};
-  const typeIcon={field:'📡',assessment:'📊',incident:'⚠️',general:'📝'};
-  const critical=intelReports.filter(r=>r.severity==='critical').length;
-  const high=intelReports.filter(r=>r.severity==='high').length;
-  document.getElementById('intelStats').innerHTML=`
-    <div class="stat-card teal"><div class="stat-label">Total Reports</div><div class="stat-value teal">${intelReports.length}</div></div>
-    <div class="stat-card red"><div class="stat-label">Critical</div><div class="stat-value red">${critical}</div></div>
-    <div class="stat-card amber"><div class="stat-label">High Priority</div><div class="stat-value amber">${high}</div></div>
-    <div class="stat-card blue"><div class="stat-label">Open Reports</div><div class="stat-value blue">${intelReports.filter(r=>r.status==='open').length}</div></div>`;
-  let list=intelFilter==='all'?intelReports:intelReports.filter(r=>r.type===intelFilter);
-  const el=document.getElementById('intelList');
-  if (!list.length) { el.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div>No reports logged yet.</div>`; return; }
-  el.innerHTML=list.map(r=>{
-    const dt=new Date(r.createdAt);
-    const dtStr=dt.toLocaleDateString('en-IN')+' '+dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-    return `<div class="card" style="border-left:3px solid ${sevColor[r.severity]||'var(--border)'};margin-bottom:0.75rem">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem">
-            <span style="font-size:1rem">${typeIcon[r.type]||'📝'}</span>
-            <span style="font-weight:600;font-size:0.9rem">${r.title}</span>
-            <span class="badge" style="background:rgba(0,0,0,0.2);color:${sevColor[r.severity]};border:1px solid ${sevColor[r.severity]}">${sev[r.severity]||r.severity}</span>
-          </div>
-          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.5rem">${r.details}</div>
-          <div style="display:flex;gap:1rem;font-size:0.7rem;color:var(--text-dim);flex-wrap:wrap">
-            ${r.location?`<span>📍 ${r.location}</span>`:''}
-            ${r.reporter?`<span>👤 ${r.reporter}</span>`:''}
-            <span>🕐 ${dtStr}</span>
-          </div>
-        </div>
-        <button class="btn btn-danger btn-sm" onclick="deleteIntel('${r.id}')">🗑️</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-function deleteIntel(id) {
-  intelReports=intelReports.filter(r=>r.id!==id); save(); renderIntelligence(); toast('Report deleted.');
-}
-
-// ═══════════════════════════════════════
-//  EMERGENCY
-// ═══════════════════════════════════════
-let emergencyFilter='all';
-function filterEmergency(filter,el) {
-  emergencyFilter=filter;
-  document.querySelectorAll('#panel-emergency .shift-btn').forEach(b=>b.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderEmergency();
-}
-function saveEmergency() {
-  const name=document.getElementById('emName').value.trim();
-  const location=document.getElementById('emLocation').value.trim();
-  if (!name||!location) { toast('Incident name and location required.','error'); return; }
-  const obj={
-    id:uid(), name, location,
-    type: document.getElementById('emType').value,
-    severity: document.getElementById('emSeverity').value,
-    reporter: document.getElementById('emReporter').value.trim(),
-    affected: parseInt(document.getElementById('emAffected').value)||0,
-    details: document.getElementById('emDetails').value.trim(),
-    status:'active', createdAt: new Date().toISOString()
-  };
-  emergencies.unshift(obj);
-  // Auto-generate critical alert
-  alertsData.unshift({id:uid(),title:`🚨 EMERGENCY: ${name}`,message:`Active emergency declared at ${location}. ${obj.type} — ${obj.severity} severity.`,level:'critical',target:'All Personnel',createdAt:new Date().toISOString()});
-  save(); closeModal('emergencyModal');
-  ['emName','emLocation','emReporter','emDetails'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('emAffected').value='0';
-  renderEmergency(); updateBadges();
-  toast(`🚨 Emergency declared: ${name}`,'error');
-}
-function resolveEmergency(id,status) {
-  const idx=emergencies.findIndex(e=>e.id===id);
-  if (idx>=0) { emergencies[idx].status=status; emergencies[idx].resolvedAt=new Date().toISOString(); }
-  save(); renderEmergency(); updateBadges(); toast(`Incident marked as ${status}.`,'success');
-}
-function deleteEmergency(id) {
-  if (!confirm('Delete this emergency record?')) return;
-  emergencies=emergencies.filter(e=>e.id!==id); save(); renderEmergency(); updateBadges(); toast('Emergency record deleted.');
-}
-function renderEmergency() {
-  const sevColor={critical:'var(--danger)',high:'#f97316',medium:'var(--accent3)'};
-  const sevLabel={critical:'🔴 CRITICAL',high:'🟠 HIGH',medium:'🟡 MEDIUM'};
-  const statusColor={active:'var(--danger)',contained:'var(--accent3)',resolved:'var(--success)'};
-  const active=emergencies.filter(e=>e.status==='active').length;
-  const contained=emergencies.filter(e=>e.status==='contained').length;
-  const resolved=emergencies.filter(e=>e.status==='resolved').length;
-  // Banner
-  const banner=document.getElementById('emergencyBanner');
-  if (active>0) { banner.style.display='flex'; document.getElementById('emergencyBannerText').textContent=`${active} active incident${active>1?'s':''} requiring immediate attention`; }
-  else { banner.style.display='none'; }
-  updateBadges();
-  let list=emergencyFilter==='all'?emergencies:emergencies.filter(e=>e.status===emergencyFilter);
-  const el=document.getElementById('emergencyList');
-  if (!list.length) { el.innerHTML=`<div class="empty-state"><div class="empty-icon">🚨</div>No emergencies declared. System nominal.</div>`; return; }
-  el.innerHTML=list.map(e=>{
-    const dt=new Date(e.createdAt);
-    const dtStr=dt.toLocaleDateString('en-IN')+' '+dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-    const sc=statusColor[e.status]||'var(--text-muted)';
-    return `<div class="card" style="border-left:4px solid ${sevColor[e.severity]||'var(--border)'};margin-bottom:0.75rem">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;flex-wrap:wrap">
-            <span style="font-size:1.1rem">${e.type.split(' ')[0]}</span>
-            <span style="font-weight:700;font-size:0.92rem">${e.name}</span>
-            <span class="badge" style="background:rgba(0,0,0,0.2);color:${sevColor[e.severity]};border:1px solid ${sevColor[e.severity]}">${sevLabel[e.severity]||e.severity}</span>
-            <span style="font-family:var(--mono);font-size:0.68rem;color:${sc};text-transform:uppercase">${e.status}</span>
-          </div>
-          <div style="display:flex;gap:1rem;font-size:0.78rem;color:var(--text-muted);margin-bottom:0.4rem;flex-wrap:wrap">
-            <span>📍 ${e.location}</span>
-            ${e.affected?`<span>👥 ${e.affected} affected</span>`:''}
-            ${e.reporter?`<span>👤 ${e.reporter}</span>`:''}
-          </div>
-          ${e.details?`<div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.4rem">${e.details}</div>`:''}
-          <div style="font-size:0.7rem;color:var(--text-dim)">🕐 Declared: ${dtStr}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.4rem">
-          ${e.status==='active'?`<button class="btn btn-amber btn-sm" onclick="resolveEmergency('${e.id}','contained')">🟡 Contain</button>
-          <button class="btn btn-secondary btn-sm" onclick="resolveEmergency('${e.id}','resolved')">✅ Resolve</button>`:''}
-          <button class="btn btn-danger btn-sm" onclick="deleteEmergency('${e.id}')">🗑️</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ═══════════════════════════════════════
-//  ALERTS
-// ═══════════════════════════════════════
-let alertsFilter='all';
-function filterAlerts(filter,el) {
-  alertsFilter=filter;
-  document.querySelectorAll('#panel-alerts .shift-btn').forEach(b=>b.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderAlerts();
-}
-function saveAlert() {
-  const title=document.getElementById('alTitle').value.trim();
-  const message=document.getElementById('alMessage').value.trim();
-  if (!title||!message) { toast('Title and message required.','error'); return; }
-  const obj={
-    id:uid(), title, message,
-    level: document.getElementById('alLevel').value,
-    target: document.getElementById('alTarget').value,
-    createdAt: new Date().toISOString()
-  };
-  alertsData.unshift(obj);
-  save(); closeModal('alertModal');
-  ['alTitle','alMessage'].forEach(id=>document.getElementById(id).value='');
-  renderAlerts(); updateBadges(); toast('Alert broadcasted!','success');
-}
-function clearAllAlerts() {
-  if (!confirm('Clear all alerts?')) return;
-  alertsData=[]; save(); renderAlerts(); updateBadges(); toast('All alerts cleared.');
-}
-function deleteAlert(id) {
-  alertsData=alertsData.filter(a=>a.id!==id); save(); renderAlerts(); updateBadges(); toast('Alert deleted.');
-}
-function renderAlerts() {
-  const levelColor={critical:'var(--danger)',warning:'var(--accent3)',info:'var(--accent2)'};
-  const levelLabel={critical:'🔴 CRITICAL',warning:'🟡 WARNING',info:'🔵 INFO'};
-  let list=alertsFilter==='all'?alertsData:alertsData.filter(a=>a.level===alertsFilter);
-  const el=document.getElementById('alertsList');
-  if (!list.length) { el.innerHTML=`<div class="empty-state"><div class="empty-icon">🔔</div>No alerts. System is quiet.</div>`; return; }
-  el.innerHTML=list.map(a=>{
-    const dt=new Date(a.createdAt);
-    const dtStr=dt.toLocaleDateString('en-IN')+' '+dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-    const lc=levelColor[a.level]||'var(--text-muted)';
-    return `<div class="card" style="border-left:3px solid ${lc};margin-bottom:0.6rem">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem">
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;flex-wrap:wrap">
-            <span style="font-weight:600;font-size:0.88rem">${a.title}</span>
-            <span class="badge" style="background:rgba(0,0,0,0.15);color:${lc};border:1px solid ${lc}">${levelLabel[a.level]}</span>
-            <span style="font-size:0.68rem;color:var(--text-dim);font-family:var(--mono)">${a.target}</span>
-          </div>
-          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem">${a.message}</div>
-          <div style="font-size:0.7rem;color:var(--text-dim)">🕐 ${dtStr}</div>
-        </div>
-        <button class="btn btn-danger btn-sm" onclick="deleteAlert('${a.id}')">🗑️</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ═══════════════════════════════════════
-//  SETTINGS
-// ═══════════════════════════════════════
-let activeSettingsTab='general';
-function switchSettingsTab(tab, el) {
-  activeSettingsTab=tab;
-  document.querySelectorAll('#settingsTabs .shift-btn').forEach(b=>b.classList.remove('active'));
-  if (el) el.classList.add('active');
-  ['general','notifications','map','data'].forEach(t=>{
-    const el=document.getElementById('settings-tab-'+t);
-    if (el) el.style.display=t===tab?'block':'none';
-  });
-}
-function initSettings() {
-  // Calculate storage size
-  let total=0;
-  ['vos_volunteers','vos_areas','vos_roster','vos_intel','vos_emergencies','vos_alerts'].forEach(k=>{
-    total+=(localStorage.getItem(k)||'').length;
-  });
-  const kb=(total/1024).toFixed(1);
-  const el=document.getElementById('settStorageInfo');
-  if (el) el.textContent=kb+' KB used';
-}
-function saveSettings() {
-  const orgName=document.getElementById('settOrgName').value.trim();
-  if (orgName) localStorage.setItem('vos_org_name', orgName);
-  toast('Settings saved!','success');
-}
-function saveMapSettings() {
-  toast('Map settings applied!','success');
-}
-function exportAllData() {
-  const data={volunteers,areas,roster,intelReports,emergencies,alerts:alertsData,exportedAt:new Date().toISOString()};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url;
-  a.download=`volunteeros-backup-${new Date().toISOString().split('T')[0]}.json`;
-  a.click(); URL.revokeObjectURL(url); toast('All data exported!','success');
-}
-function importData(input) {
-  const file=input.files[0]; if (!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try {
-      const data=JSON.parse(e.target.result);
-      if (data.volunteers) volunteers=data.volunteers;
-      if (data.areas) areas=data.areas;
-      if (data.roster) roster=data.roster;
-      if (data.intelReports) intelReports=data.intelReports;
-      if (data.emergencies) emergencies=data.emergencies;
-      if (data.alerts) alertsData=data.alerts;
-      save(); updateBadges(); refreshDashboard();
-      toast('Data imported successfully!','success');
-    } catch(err) { toast('Invalid JSON file.','error'); }
-  };
-  reader.readAsText(file);
-  input.value='';
+  setTimeout(() => el.remove(), 3500);
 }
 
 // ═══════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════
-document.getElementById('allocDate').value=new Date().toISOString().split('T')[0];
+// Set default date for allocation
+document.getElementById('allocDate').value = new Date().toISOString().split('T')[0];
 
+// Load sample data if empty
 if (!volunteers.length && !areas.length) {
   volunteers = [
-    {id:uid(),name:'Priya Sharma',vid:'VOL-001',phone:'+91 9876543210',date:new Date().toISOString().split('T')[0],shift:'Morning',exp:3,skills:['🏥 Medical','💊 First Aid','🧠 Counselling'],notes:'',assigned:0},
-    {id:uid(),name:'Rajan Kumar',vid:'VOL-002',phone:'+91 9876500001',date:new Date().toISOString().split('T')[0],shift:'Evening',exp:1,skills:['🍲 Food Service','🚛 Logistics'],notes:'',assigned:0},
-    {id:uid(),name:'Aisha Nair',vid:'VOL-003',phone:'+91 9876500002',date:new Date().toISOString().split('T')[0],shift:'Morning',exp:5,skills:['🔥 Rescue','🔧 Technical','📣 Communication'],notes:'',assigned:0},
-    {id:uid(),name:'Devraj Patel',vid:'VOL-004',phone:'+91 9876500003',date:new Date().toISOString().split('T')[0],shift:'Night',exp:2,skills:['📚 Teaching','📊 Survey','🌐 Translation'],notes:'',assigned:0},
-    {id:uid(),name:'Sunita Bose',vid:'VOL-005',phone:'+91 9876500004',date:new Date().toISOString().split('T')[0],shift:'Any',exp:4,skills:['🧹 Sanitation','🍲 Food Service','🚛 Logistics'],notes:'',assigned:0},
-    {id:uid(),name:'Karthik Menon',vid:'VOL-006',phone:'+91 9876500005',date:new Date().toISOString().split('T')[0],shift:'Morning',exp:2,skills:['🔧 Technical','📣 Communication'],notes:'',assigned:0},
-    {id:uid(),name:'Lakshmi Iyer',vid:'VOL-007',phone:'+91 9876500006',date:new Date().toISOString().split('T')[0],shift:'Evening',exp:6,skills:['🏥 Medical','🧠 Counselling','💊 First Aid'],notes:'',assigned:0},
-    {id:uid(),name:'Mohan Das',vid:'VOL-008',phone:'+91 9876500007',date:new Date().toISOString().split('T')[0],shift:'Night',exp:3,skills:['🔥 Rescue','🚛 Logistics'],notes:'',assigned:0},
-    {id:uid(),name:'Deepa Reddy',vid:'VOL-009',phone:'+91 9876500008',date:new Date().toISOString().split('T')[0],shift:'Morning',exp:1,skills:['📚 Teaching','🌐 Translation','📊 Survey'],notes:'',assigned:0},
-    {id:uid(),name:'Suresh Pillai',vid:'VOL-010',phone:'+91 9876500009',date:new Date().toISOString().split('T')[0],shift:'Any',exp:7,skills:['🍲 Food Service','🧹 Sanitation','📣 Communication'],notes:'',assigned:0},
+    { id: uid(), name: 'Priya Sharma', vid: 'VOL-001', phone: '+91 9876543210', date: new Date().toISOString().split('T')[0], shift: 'Morning', exp: 3, skills: ['🏥 Medical','💊 First Aid','🧠 Counselling'], notes: '', assigned: 0 },
+    { id: uid(), name: 'Rajan Kumar', vid: 'VOL-002', phone: '+91 9876500001', date: new Date().toISOString().split('T')[0], shift: 'Evening', exp: 1, skills: ['🍲 Food Service','🚛 Logistics'], notes: '', assigned: 0 },
+    { id: uid(), name: 'Aisha Nair', vid: 'VOL-003', phone: '+91 9876500002', date: new Date().toISOString().split('T')[0], shift: 'Morning', exp: 5, skills: ['🔥 Rescue','🔧 Technical','📣 Communication'], notes: '', assigned: 0 },
+    { id: uid(), name: 'Devraj Patel', vid: 'VOL-004', phone: '+91 9876500003', date: new Date().toISOString().split('T')[0], shift: 'Night', exp: 2, skills: ['📚 Teaching','📊 Survey','🌐 Translation'], notes: '', assigned: 0 },
+    { id: uid(), name: 'Sunita Bose', vid: 'VOL-005', phone: '+91 9876500004', date: new Date().toISOString().split('T')[0], shift: 'Any', exp: 4, skills: ['🧹 Sanitation','🍲 Food Service','🚛 Logistics'], notes: '', assigned: 0 },
   ];
   areas = [
-    {id:uid(),name:'Flood Relief Camp – Sector 4',task:'Food Distribution',location:'Ward 12, Bengaluru',urgency:'high',required:3,coord:'Meena Iyer',skills:['🍲 Food Service','🚛 Logistics'],desc:'Food & water distribution.',lat:12.9352,lng:77.5765},
-    {id:uid(),name:'Community Health Post',task:'Medical Aid',location:'Koramangala, Bengaluru',urgency:'high',required:2,coord:'Dr. Arjun Seth',skills:['🏥 Medical','💊 First Aid'],desc:'Free medical checkup.',lat:12.9352,lng:77.6271},
-    {id:uid(),name:"Children's Education Hub",task:'Education Support',location:'Jayanagar, Bengaluru',urgency:'medium',required:2,coord:'Lata Krishnan',skills:['📚 Teaching','🌐 Translation'],desc:'After-school tutoring.',lat:12.9279,lng:77.5938},
-    {id:uid(),name:'Disaster Survey Zone',task:'Survey & Assessment',location:'Yelahanka, Bengaluru',urgency:'medium',required:2,coord:'Suresh Rao',skills:['📊 Survey','📣 Communication'],desc:'Damage assessment.',lat:13.1004,lng:77.5963},
-    {id:uid(),name:'Sanitation Drive – North Zone',task:'Sanitation & Hygiene',location:'Hebbal, Bengaluru',urgency:'low',required:2,coord:'Kiran Reddy',skills:['🧹 Sanitation'],desc:'Sanitation cleanup.',lat:13.0355,lng:77.5970},
-  ];
-  alertsData = [
-    {id:uid(),title:'System Initialized',message:'VolunteerOS has started successfully. All modules are operational.',level:'info',target:'All Personnel',createdAt:new Date().toISOString()},
-    {id:uid(),title:'Volunteer Registration Open',message:'New volunteers can now register for the Bengaluru Relief Operation.',level:'warning',target:'Coordinators Only',createdAt:new Date().toISOString()},
+    { id: uid(), name: 'Flood Relief Camp – Sector 4', task: 'Food Distribution', location: 'Ward 12, Bengaluru', urgency: 'high', required: 3, coord: 'Meena Iyer', skills: ['🍲 Food Service','🚛 Logistics'], desc: 'Immediate food & water distribution for 500 displaced families.' },
+    { id: uid(), name: 'Community Health Post', task: 'Medical Aid', location: 'Koramangala, Bengaluru', urgency: 'high', required: 2, coord: 'Dr. Arjun Seth', skills: ['🏥 Medical','💊 First Aid'], desc: 'Free medical checkup and first aid.' },
+    { id: uid(), name: 'Children\'s Education Hub', task: 'Education Support', location: 'Jayanagar, Bengaluru', urgency: 'medium', required: 2, coord: 'Lata Krishnan', skills: ['📚 Teaching','🌐 Translation'], desc: 'After-school tutoring for underprivileged children.' },
+    { id: uid(), name: 'Disaster Survey Zone', task: 'Survey & Assessment', location: 'Yelahanka, Bengaluru', urgency: 'medium', required: 2, coord: 'Suresh Rao', skills: ['📊 Survey','📣 Communication'], desc: 'Damage assessment and need mapping.' },
+    { id: uid(), name: 'Sanitation Drive – North Zone', task: 'Sanitation & Hygiene', location: 'Hebbal, Bengaluru', urgency: 'low', required: 2, coord: 'Kiran Reddy', skills: ['🧹 Sanitation'], desc: 'Sanitation awareness and cleanup.' },
   ];
   save();
 }
